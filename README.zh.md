@@ -110,43 +110,50 @@ skills/bkn-requirement
 
 ## 如何使用
 
-### 1. 准备业务访谈
+### 0. 项目资料目录
+
+每个客户或项目建议建立独立目录，避免售前、交付和开发资料混在一起：
+
+```text
+docs/requirements/prj-<客户或项目简称>/
+```
+
+命名建议：
+
+| 文档类型 | 命名格式 |
+|---|---|
+| 调研大纲 | `<项目名>-第X轮调研大纲.md` |
+| 调研备忘 | `YYYYMMDD-<项目名>-第X轮现场交流调研备忘.md` |
+| 验证输出 | `<项目名>-prd-第X轮验证输出.md` |
+| PRD | `<项目名>-PRD vX.Y.md` |
+
+第一轮调研后不一定直接生成 PRD。如果信息不足，先输出验证性 `meeting_digest`，用于判断缺口和下一轮调研重点；如果信息足够，再生成 `<项目名>-PRD v0.1.md`。
+
+### 1. 准备客户拜访
 
 使用：
 
 ```text
-使用 $bkn-requirement，基于 interview-template.md 帮我准备一次业务专家访谈。
+使用 $bkn-requirement，基于以下客户背景生成一页客户调研提纲。
 ```
 
-主要模板：
-
-```text
-skills/bkn-requirement/assets/interview-template.md
-```
-
-### 2. 将纪要整理成 PRD
+### 2. 处理会议纪要
 
 使用：
 
 ```text
-使用 $bkn-requirement，基于这份会议纪要整理业务场景中心 PRD。
+使用 $bkn-requirement，基于这份豆包会议纪要，输出本轮调研更新、待确认问题和 PRD 影响。
 ```
 
-预期输出包括：
+### 3. 迭代 PRD
 
-- 业务背景与目标
-- 业务用户与职责
-- 场景总览
-- 场景需求详述
-- 业务规则
-- 业务系统、表单与数据来源
-- 权限与审批要求
-- 界面 / 交互期望
-- 业务验收用例
-- 待确认问题
-- `BKN_Creator` 交接摘要
+使用：
 
-### 3. 评估已有 PRD
+```text
+使用 $bkn-requirement，基于本轮调研大纲、会议纪要及相关材料、上一版 PRD，更新新一版 PRD，并生成版本记录。
+```
+
+### 4. 评估已有 PRD
 
 使用：
 
@@ -156,7 +163,7 @@ skills/bkn-requirement/assets/interview-template.md
 
 Skill 会识别场景缺口、规则不清、数据缺口、验收缺口和交接风险。
 
-### 4. 交接给 `BKN_Creator`
+### 5. 交接给 `BKN_Creator`
 
 当 PRD 已准备好时，使用：
 
@@ -177,6 +184,8 @@ skills/bkn-requirement/
   SKILL.md
   agents/openai.yaml
   assets/
+    interview-brief-template.md
+    research-plan-template.md
     interview-template.md
     requirements-template.md
     scenario-test-case-template.md

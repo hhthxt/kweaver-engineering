@@ -1,16 +1,78 @@
 # BKN 需求发现方法
 
-用于将业务材料转换为业务场景中心的 BKN-ready PRD。
+用于将客户背景、调研目标、AI 会议纪要、业务材料和上一版 PRD 持续转换为业务场景中心的 BKN-ready PRD。
+
+## 需求发现生命周期
+
+需求发现不是一次性生成 PRD，而是多轮收敛：
+
+```text
+Intake
+→ Research Plan
+→ Interview
+→ Meeting Digest
+→ PRD Iteration
+→ Readiness Gate
+→ Handoff
+```
+
+| 阶段 | 输入 | 输出 |
+|---|---|---|
+| Intake | 客户名称、行业、部门、粗略方向 | 最小澄清问题、调研前置条件 |
+| Research Plan | 客户背景、拜访目标、已有材料 | 客户现场短提纲、参会角色建议、材料索要清单 |
+| Interview | 现场访谈、线上会议 | AI 会议纪要、录音转写、白板和材料附件 |
+| Meeting Digest | 豆包 / 飞书 / 腾讯会议等会议纪要 | 本轮新增事实、假设、冲突、场景、规则、待确认问题 |
+| PRD Iteration | 调研大纲、会议纪要及材料、上一版 PRD | 新一版 PRD、修订摘要、版本记录、下一轮追问 |
+| Readiness Gate | PRD、样例、规则、系统数据 | R0-R4 成熟度和缺口判断 |
+| Handoff | 已确认 PRD | BKN_Creator 交接摘要 |
+
+客户现场模板应短、业务化、开放式；技术字段、建模线索和系统细表应进入会后结构化或 handoff，不应压到客户访谈现场。
+
+## 项目资料组织
+
+每个客户或项目应有独立目录，默认：
+
+```text
+docs/requirements/prj-<客户或项目简称>/
+```
+
+该目录中存放本项目所有调研大纲、会议纪要、验证输出、PRD 版本、补充材料和 handoff。不要把多个项目的材料混放在一个根目录。
+
+命名规则：
+
+| 文档类型 | 命名格式 | 示例 |
+|---|---|---|
+| 调研大纲 | `<项目名>-第X轮调研大纲.md` | `国泰海通券结业务-第1轮调研大纲.md` |
+| 调研备忘 | `YYYYMMDD-<项目名>-第X轮现场交流调研备忘.md` | `20250515-国泰海通-第1轮现场交流调研备忘.md` |
+| 验证输出 | `<项目名>-prd-第X轮验证输出.md` | `国泰海通券结业务-prd-第1轮验证输出.md` |
+| PRD | `<项目名>-PRD vX.Y.md` | `国泰海通券结业务-PRD v0.1.md` |
+
+第一轮后不一定直接生成 PRD：
+
+- 如果信息不足以形成 PRD，输出验证性 `meeting_digest`，用于判断缺口和下一轮调研重点。
+- 如果信息足以形成候选 PRD，输出 `PRD v0.1`，状态标注为 `Draft`，并保留未确认事项。
 
 ## 成熟度
 
 | 等级 | 含义 | 建议路线 |
 |---|---|---|
 | R0 Idea | 只有粗略想法 | `hold` |
-| R1 Use Case Brief | 用户、目标、场景大致明确 | `interview` |
-| R2 PRD Candidate | 有场景、流程和规则候选，但关键口径待确认 | `prd_refinement` |
+| R1 Use Case Brief | 客户、行业、用户、目标或场景大致明确 | `research_plan` / `interview` |
+| R2 PRD Candidate | 有场景、流程和规则候选，但关键口径待确认 | `prd_iteration` / `prd_refinement` |
 | R3 PRD Ready | 业务场景、规则、系统数据和验收用例基本可评审 | `business_review` |
 | R4 Implementation Ready | 字段、样例、权限、交互、验收和 handoff 已确认 | `bkn_creator_handoff` |
+
+## 输出模式选择
+
+| 输入状态 | 模式 | 原则 |
+|---|---|---|
+| 弱输入，仅有客户、行业、部门、拜访目的 | `intake_mode` | 只问最少澄清问题，不输出 PRD。 |
+| 拜访前准备 | `research_plan_mode` | 输出 1-2 页客户现场短提纲。 |
+| 输入 AI 会议纪要 | `meeting_digest_mode` | 自动提取本轮调研更新，不要求手工填表。 |
+| 调研大纲 + 会议纪要及材料 + 上一版 PRD | `prd_iteration_mode` | 输出新一版 PRD 和版本记录。 |
+| 业务材料充分 | `prd_mode` | 输出完整场景中心 PRD。 |
+| 已有 PRD / BRD | `review_mode` | 输出质量评分和缺口。 |
+| PRD 已确认 | `handoff_mode` | 输出 BKN_Creator 交接摘要。 |
 
 ## 主线方法
 
@@ -28,6 +90,19 @@
 → 界面 / 交互期望
 → 业务验收用例
 → BKN_Creator 交接摘要
+```
+
+如果处于 PRD 迭代阶段，先执行：
+
+```text
+调研大纲 / 本轮目标
+→ 会议纪要及相关材料
+→ 上一版 PRD
+→ 本轮目标对齐
+→ 新增事实 / 修正事实 / 废弃内容
+→ 影响章节
+→ 新一版 PRD
+→ 版本记录与下一轮追问
 ```
 
 ## 场景拆解
@@ -77,6 +152,37 @@
 - 外部写回系统。
 
 不要让表结构决定 BKN 对象模型。数据材料用于验证或实现业务对象。
+
+## PRD 版本与迭代
+
+PRD 是版本化资产。每次会议纪要、客户补充材料或业务确认进入 PRD 时，必须记录：
+
+- 本轮输入来源；
+- 本轮调研目标是否被确认；
+- 新增已确认事实；
+- 对上一版 PRD 的修正事实；
+- 废弃或移出范围的内容；
+- 影响的 PRD 章节和场景；
+- 版本号建议；
+- 下一轮待确认问题。
+
+`prd_iteration_mode` 标准输入：
+
+| 输入 | 作用 |
+|---|---|
+| `research_outline` | 本轮调研大纲和原计划确认的问题。 |
+| `meeting_notes_and_materials` | 会议纪要、录音转写、截图、表单、样例数据和客户补充材料。 |
+| `previous_prd` | 上一版 PRD，作为本轮增删改基线。 |
+
+`prd_iteration_mode` 标准输出：
+
+| 输出 | 说明 |
+|---|---|
+| `updated_prd` | 新一版 PRD。 |
+| `revision_summary` | 新增、修正、废弃和影响章节摘要。 |
+| `change_log` | 版本记录。 |
+| `unresolved_questions` | 待确认问题。 |
+| `next_research_focus` | 下一轮调研重点。 |
 
 ## BKN_Creator 交接
 

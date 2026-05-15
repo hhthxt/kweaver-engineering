@@ -110,43 +110,50 @@ Use $bkn-requirement to generate a standard PRD from this interview note.
 
 ## How To Use
 
-### 1. Prepare an interview
+### 0. Project folder
+
+Create one folder per customer or project so presales, delivery, and engineering materials do not mix:
+
+```text
+docs/requirements/prj-<customer-or-project-short-name>/
+```
+
+Suggested names:
+
+| Document type | Naming format |
+|---|---|
+| Research outline | `<project>-round-X-research-outline.md` |
+| Meeting memo | `YYYYMMDD-<project>-round-X-meeting-memo.md` |
+| Validation output | `<project>-prd-round-X-validation.md` |
+| PRD | `<project>-PRD vX.Y.md` |
+
+The first round does not always produce a PRD. If the information is insufficient, output a validation-style `meeting_digest` to identify gaps and the next research focus. If the information is sufficient, generate `<project>-PRD v0.1.md`.
+
+### 1. Prepare a customer visit
 
 Use:
 
 ```text
-Use $bkn-requirement and interview-template.md to prepare a business expert interview.
+Use $bkn-requirement to generate a one-page customer research outline from the following customer background.
 ```
 
-Main template:
-
-```text
-skills/bkn-requirement/assets/interview-template.md
-```
-
-### 2. Convert notes into a PRD
+### 2. Process meeting notes
 
 Use:
 
 ```text
-Use $bkn-requirement to convert this meeting note into a business-scenario-centered PRD.
+Use $bkn-requirement to process this AI meeting note and output this round's research updates, unresolved questions, and PRD impact.
 ```
 
-Expected output:
+### 3. Iterate a PRD
 
-- Business background and goals
-- Business users and responsibilities
-- Scenario overview
-- Scenario details
-- Business rules
-- Systems, forms, and data sources
-- Permission and approval requirements
-- Interface expectations
-- Business acceptance cases
-- Follow-up questions
-- `BKN_Creator` handoff summary
+Use:
 
-### 3. Review an existing PRD
+```text
+Use $bkn-requirement to update the next PRD version from this research outline, meeting notes and materials, and previous PRD, including the version record.
+```
+
+### 4. Review an existing PRD
 
 Use:
 
@@ -156,7 +163,7 @@ Use $bkn-requirement to assess whether this PRD is ready for BKN_Creator.
 
 The skill will identify missing scenario details, unclear rules, data gaps, acceptance gaps, and handoff risks.
 
-### 4. Handoff to `BKN_Creator`
+### 5. Handoff to `BKN_Creator`
 
 When the PRD is ready, use:
 
@@ -177,6 +184,8 @@ skills/bkn-requirement/
   SKILL.md
   agents/openai.yaml
   assets/
+    interview-brief-template.md
+    research-plan-template.md
     interview-template.md
     requirements-template.md
     scenario-test-case-template.md

@@ -1,7 +1,10 @@
 # 输出 Schema
 
-用于 V0.4 结构化输出。完整 PRD 可按需要输出：
+用于 V0.5 结构化输出。完整 PRD 可按需要输出：
 
+- `research_plan`：会前调研准备和客户现场短提纲。
+- `meeting_digest`：会议纪要结构化结果。
+- `prd_revision`：PRD 迭代更新摘要和版本记录。
 - `requirement_schema`：业务场景中心的结构化需求索引。
 - `quality_assessment`：PRD 质量评分与成熟度。
 - `bkn_creator_handoff`：交给 `bkn-creator` 的下游交接信息。
@@ -10,22 +13,110 @@
 
 ## 路由字段约定
 
-V0.4 区分两类路线：
+V0.5 区分两类路线：
 
 | 字段 | 用途 | 枚举 |
 |---|---|---|
-| `quality_assessment.readiness_decision.quality_route` | 判断 PRD 质量和下一步需求工作 | `hold`、`interview`、`prd_refinement`、`business_review`、`bkn_creator_handoff` |
+| `quality_assessment.readiness_decision.quality_route` | 判断 PRD 质量和下一步需求工作 | `hold`、`research_plan`、`interview`、`prd_iteration`、`prd_refinement`、`business_review`、`bkn_creator_handoff` |
 | `bkn_creator_handoff.handoff_route` | 判断交给 `BKN_Creator` 后的下游动作 | `hold`、`interview`、`extract_after_prd_refinement`、`extract_after_scene_split`、`create_after_business_confirmation`、`update` |
+
+V0.5 输出模式枚举：
+
+```yaml
+output_mode: intake_mode | research_plan_mode | meeting_digest_mode | prd_iteration_mode | prd_mode | review_mode | handoff_mode
+```
 
 映射建议：
 
 | quality_route | handoff_route |
 |---|---|
 | `hold` | `hold` |
+| `research_plan` | `interview` |
 | `interview` | `interview` |
+| `prd_iteration` | `extract_after_prd_refinement` |
 | `prd_refinement` | `extract_after_prd_refinement` 或 `extract_after_scene_split` |
 | `business_review` | `extract_after_scene_split` |
 | `bkn_creator_handoff` | `create_after_business_confirmation` 或 `update` |
+
+## research_plan
+
+```yaml
+research_plan:
+  schema_version: bkn-requirement.v0.5
+  customer:
+    name:
+    industry:
+    department_or_team:
+    interview_target_roles:
+  research_goal:
+  known_background:
+  customer_brief_questions:
+    - topic:
+      question:
+      purpose:
+  suggested_participants:
+  materials_to_request:
+  expected_post_meeting_outputs:
+```
+
+## meeting_digest
+
+```yaml
+meeting_digest:
+  schema_version: bkn-requirement.v0.5
+  meeting:
+    date:
+    participants:
+    source_materials:
+    research_outline:
+    previous_prd:
+  goal_alignment:
+    planned_questions:
+    confirmed_in_meeting:
+    not_confirmed:
+  confirmed_facts:
+  assumptions:
+  conflicts:
+  business_scenarios:
+  business_rules:
+  systems_forms_and_data:
+  acceptance_examples:
+  prd_impact:
+    add:
+    update:
+    remove:
+    affected_sections:
+  unresolved_questions:
+  next_research_focus:
+```
+
+## prd_revision
+
+```yaml
+prd_revision:
+  schema_version: bkn-requirement.v0.5
+  inputs:
+    research_outline:
+    meeting_notes_and_materials:
+    previous_prd:
+  revision:
+    previous_version:
+    new_version:
+    document_status: draft | business_review | confirmed | handoff_ready
+    revision_summary:
+    added_confirmed_facts:
+    corrected_facts:
+    removed_or_out_of_scope:
+    affected_sections:
+    unresolved_questions:
+    next_research_focus:
+  change_log_entry:
+    version:
+    date:
+    input_sources:
+    major_changes:
+    still_unconfirmed:
+```
 
 ## requirement_schema
 
@@ -33,13 +124,15 @@ V0.4 区分两类路线：
 
 ```yaml
 requirement_schema:
-  schema_version: bkn-requirement.v0.4
+  schema_version: bkn-requirement.v0.5
   document:
     title:
     version:
+    previous_version:
     source_inputs:
-    output_mode: prd_mode | review_mode | interview_mode | handoff_mode
-    status: draft | reviewed | confirmed
+    output_mode: intake_mode | research_plan_mode | meeting_digest_mode | prd_iteration_mode | prd_mode | review_mode | handoff_mode
+    status: draft | business_review | confirmed | handoff_ready
+    current_iteration_summary:
   business_context:
     domain:
     use_case_name:
@@ -120,11 +213,11 @@ requirement_schema:
 
 ```yaml
 quality_assessment:
-  schema_version: bkn-requirement.v0.4
+  schema_version: bkn-requirement.v0.5
   requirement_maturity: R0 | R1 | R2 | R3 | R4
   total_score: 0-100
   readiness_decision:
-    quality_route: hold | interview | prd_refinement | business_review | bkn_creator_handoff
+    quality_route: hold | research_plan | interview | prd_iteration | prd_refinement | business_review | bkn_creator_handoff
     mapped_handoff_route: hold | interview | extract_after_prd_refinement | extract_after_scene_split | create_after_business_confirmation | update
     decision_reason:
   dimension_scores:
@@ -182,7 +275,7 @@ quality_assessment:
 
 ```yaml
 bkn_creator_handoff:
-  schema_version: bkn-requirement.v0.4
+  schema_version: bkn-requirement.v0.5
   source_prd:
   handoff_route: hold | interview | extract_after_prd_refinement | extract_after_scene_split | create_after_business_confirmation | update
   requirement_maturity: R0 | R1 | R2 | R3 | R4

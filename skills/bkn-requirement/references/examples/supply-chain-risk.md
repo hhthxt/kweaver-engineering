@@ -39,7 +39,7 @@
 
 ```yaml
 bkn_creator_handoff:
-  schema_version: bkn-requirement.v0.4
+  schema_version: bkn-requirement.v0.5
   business_confirmed:
     business_scenarios:
       - 识别供应商风险事件

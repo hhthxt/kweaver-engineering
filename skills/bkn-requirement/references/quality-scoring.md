@@ -1,6 +1,6 @@
 # 质量评分规则
 
-用于 V0.4 的 `quality_assessment` 输出。评分目的是判断 PRD 是否足以让业务专家评审、让 AI 工程师追问、并让 `BKN_Creator` 接收，不是给 BKN 模型打分。
+用于 V0.5 的 `quality_assessment` 输出。评分目的是判断 PRD 是否足以让业务专家评审、让 AI 工程师追问、并让 `BKN_Creator` 接收，不是给 BKN 模型打分。
 
 ## 总分计算
 
@@ -53,8 +53,8 @@ total_score =
 | 成熟度 | 总分参考 | 硬性条件 | 推荐路线 |
 |---|---:|---|---|
 | R0 Idea | 0-25 | 只有想法，缺用户、目标或场景。 | `hold` |
-| R1 Use Case Brief | 26-45 | 用户、目标、场景大致明确，但缺流程、规则、数据和验收。 | `interview` |
-| R2 PRD Candidate | 46-65 | 已有场景和规则候选，但关键口径、系统数据或验收样例待确认。 | `prd_refinement` |
+| R1 Use Case Brief | 26-45 | 客户、用户、目标或场景大致明确，但缺流程、规则、数据和验收。 | `research_plan` / `interview` |
+| R2 PRD Candidate | 46-65 | 已有场景和规则候选，但关键口径、系统数据或验收样例待确认。 | `prd_iteration` / `prd_refinement` |
 | R3 PRD Ready | 66-82 | 业务场景、流程、规则、系统数据和验收用例基本可评审。 | `business_review` |
 | R4 Implementation Ready | 83-100 | 字段、样例、权限、治理、交互、验收标准和下游交接均已确认。 | `bkn_creator_handoff` |
 
@@ -69,7 +69,7 @@ total_score =
 
 ## 推荐路线规则
 
-V0.4 区分两类路线：
+V0.5 区分两类路线：
 
 - `quality_route`：PRD 质量路线，用在 `quality_assessment.readiness_decision`。
 - `handoff_route`：BKN_Creator 下游路线，用在 `bkn_creator_handoff`。
@@ -79,7 +79,9 @@ V0.4 区分两类路线：
 | 推荐路线 | 触发条件 |
 |---|---|
 | `hold` | 需求只有想法，缺业务目标或决策场景。 |
+| `research_plan` | 已有客户背景和拜访目标，但缺完整流程和规则，适合先生成调研提纲。 |
 | `interview` | 需求方向存在，但缺关键业务规则、流程或角色确认。 |
+| `prd_iteration` | 有上一版 PRD 和本轮会议材料，需要生成新版本。 |
 | `prd_refinement` | 输入来自 PRD、会议纪要或材料汇总，已能整理 PRD，但需要补场景、规则、数据或验收。 |
 | `business_review` | PRD 基本完整，适合组织业务专家评审。 |
 | `bkn_creator_handoff` | PRD 已确认，能清晰交给 `BKN_Creator` 做建模抽取和后续验证。 |
@@ -89,7 +91,9 @@ V0.4 区分两类路线：
 | quality_route | 默认 handoff_route | 说明 |
 |---|---|---|
 | `hold` | `hold` | 暂不交接。 |
+| `research_plan` | `interview` | 先调研，不交接。 |
 | `interview` | `interview` | 继续访谈。 |
+| `prd_iteration` | `extract_after_prd_refinement` | 先完成 PRD 版本更新和缺口确认。 |
 | `prd_refinement` | `extract_after_prd_refinement` | PRD 可抽取候选项，但需先补业务缺口。 |
 | `business_review` | `extract_after_scene_split` | 场景基本清晰，可交给 `BKN_Creator` 做场景化抽取。 |
 | `bkn_creator_handoff` | `create_after_business_confirmation` | 业务确认后可进入建模创建；已有 BKN 时可选 `update`。 |
