@@ -56,8 +56,8 @@ BKN 元素承担三类作用：
 | 准备拜访客户，有少量背景材料 | `research_plan_mode` | 客户现场短提纲、会议目标、参会角色建议、材料索要清单 |
 | 输入 AI 会议纪要、录音转写或访谈摘要 | `meeting_digest_mode` | 本轮新增事实、假设、冲突、场景、规则、系统数据、待确认问题 |
 | 输入调研大纲、会议纪要及相关材料、上一版 PRD | `prd_iteration_mode` | 新一版 PRD、修订摘要、版本记录、成熟度变化、下一轮追问 |
-| 已有充分业务材料，需要正式文档 | `prd_mode` | 业务场景中心 PRD |
-| 已有 PRD / BRD，需要评估 | `review_mode` | 质量评分、缺口清单、改写建议 |
+| 已有业务材料、PRD 或 BRD，用户要求“整理需求 / 标准化 PRD / 改写 PRD / 输出正式文档” | `prd_mode` | 业务场景中心 PRD，附质量摘要、待确认问题和 BKN_Creator 交接摘要 |
+| 已有 PRD / BRD，用户明确要求“评估 / 评审 / 检查 / 是否可进入 BKN_Creator” | `review_mode` | 质量评分、缺口清单、改写建议 |
 | PRD 已确认，需要下游建模交接 | `handoff_mode` | `bkn_creator_handoff` |
 
 ## 项目目录与命名规范
@@ -128,8 +128,9 @@ docs/requirements/prj-<客户或项目简称>/inputs/round-XX/source-manifest.md
 3. 识别最新调研大纲、会议纪要和本轮 `inputs/round-XX/` 材料；
 4. 若用户说“处理会议纪要 / 看本轮调研”，默认进入 `meeting_digest_mode`；
 5. 若用户说“更新 PRD / 迭代需求”，默认进入 `prd_iteration_mode`，使用最新 PRD、最新会议纪要和最新调研大纲；
-6. 若用户说“评估 PRD”，默认读取最新 PRD；
-7. 若用户说“准备拜访”，默认读取项目背景、上一轮验证输出或上一版 PRD，生成下一轮调研大纲。
+6. 若用户说“整理需求 / 标准化 PRD / 改写 PRD / 输出正式文档”，默认进入 `prd_mode`，读取最新 PRD 或业务材料并输出标准 PRD；
+7. 若用户说“评估 PRD / 评审 PRD / 检查 PRD / 是否可进入 BKN_Creator”，默认读取最新 PRD 并进入 `review_mode`；
+8. 若用户说“准备拜访”，默认读取项目背景、上一轮验证输出或上一版 PRD，生成下一轮调研大纲。
 
 只有在同一目录下存在多个同版本 PRD、多个同轮次会议纪要、轮次无法判断或用户意图冲突时，才要求用户确认。本次使用了哪些文件，必须在输出开头列出“本轮输入来源”。
 
@@ -177,8 +178,8 @@ docs/requirements/prj-<客户或项目简称>/inputs/round-XX/source-manifest.md
 - `research_plan_mode`：拜访前输出客户现场短提纲、会议目标、参会角色建议和材料索要清单。默认保持 1-2 页，业务化、开放式。
 - `meeting_digest_mode`：会后读取 AI 会议纪要，输出本轮调研更新和待确认问题。不要要求 AI 工程师手工填内部调研记录。
 - `prd_iteration_mode`：基于三输入模型生成新一版 PRD。
-- `prd_mode`：输出标准 PRD，适合业务、产品、客户、交付和项目评审。
-- `review_mode`：评估已有 PRD 或访谈纪要，输出评分、问题和改写建议。
+- `prd_mode`：输出标准 PRD，适合业务、产品、客户、交付和项目评审。若输入是已有 PRD / BRD 且用户说“整理需求”，先做轻量质量判断，再直接重构为标准 PRD；质量评分和缺口作为摘要写入 PRD，不作为唯一主交付。
+- `review_mode`：仅在用户明确要求评估、评审、检查或判断是否可进入 `BKN_Creator` 时使用。输出评分、问题和改写建议，不默认生成新版 PRD。
 - `handoff_mode`：仅输出交给 `bkn-creator` 的交接摘要，适合 PRD 已确认后的下游交接。
 
 如用户明确要求“只做建模输入”，提醒这属于 `bkn-creator` 范围，并可先输出 handoff。

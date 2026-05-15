@@ -90,8 +90,9 @@ docs/requirements/prj-<客户或项目简称>/inputs/round-XX/
 3. 最新调研大纲、会议纪要和 `inputs/round-XX/` 材料；
 4. 用户意图为“处理会议纪要 / 看本轮调研”时，进入 `meeting_digest_mode`；
 5. 用户意图为“更新 PRD / 迭代需求”时，进入 `prd_iteration_mode`；
-6. 用户意图为“评估 PRD”时，读取最新 PRD；
-7. 用户意图为“准备拜访”时，基于上一轮验证输出或上一版 PRD 生成下一轮调研大纲。
+6. 用户意图为“整理需求 / 标准化 PRD / 改写 PRD / 输出正式文档”时，进入 `prd_mode`；
+7. 用户意图为“评估 PRD / 评审 PRD / 检查 PRD / 是否可进入 BKN_Creator”时，进入 `review_mode`；
+8. 用户意图为“准备拜访”时，基于上一轮验证输出或上一版 PRD 生成下一轮调研大纲。
 
 只有存在多个同版本 PRD、多个同轮次会议纪要、轮次无法判断或用户意图冲突时，才要求用户确认。
 
@@ -118,9 +119,20 @@ docs/requirements/prj-<客户或项目简称>/inputs/round-XX/
 | 拜访前准备 | `research_plan_mode` | 输出 1-2 页客户现场短提纲。 |
 | 输入 AI 会议纪要 | `meeting_digest_mode` | 自动提取本轮调研更新，不要求手工填表。 |
 | 调研大纲 + 会议纪要及材料 + 上一版 PRD | `prd_iteration_mode` | 输出新一版 PRD 和版本记录。 |
-| 业务材料充分 | `prd_mode` | 输出完整场景中心 PRD。 |
-| 已有 PRD / BRD | `review_mode` | 输出质量评分和缺口。 |
+| 业务材料充分，或已有 PRD / BRD 且用户要求“整理需求 / 标准化 PRD / 改写 PRD” | `prd_mode` | 输出完整场景中心 PRD，并附质量摘要和待确认问题。 |
+| 已有 PRD / BRD 且用户明确要求“评估 / 评审 / 检查 / 是否可进入 BKN_Creator” | `review_mode` | 输出质量评分、缺口、改写建议和交接风险。 |
 | PRD 已确认 | `handoff_mode` | 输出 BKN_Creator 交接摘要。 |
+
+## 已有 PRD 的整理与评审分流
+
+当用户提供一份已有 PRD / BRD / 需求文档时，不能只根据文件类型默认评审。必须结合用户动词判断主交付：
+
+- 用户说“整理需求、整理 PRD、标准化、改写、输出正式文档、转成标准 PRD”时，主交付是新版标准 PRD，使用 `prd_mode`。
+- 用户说“评估、评审、检查、打分、看看能不能进入 BKN_Creator”时，主交付是评审报告，使用 `review_mode`。
+- 如果用户同时要求“先评审再整理”，先输出轻量评审摘要，再生成新版 PRD。
+- 如果已有 PRD 信息不足以生成可评审 PRD，输出验证性结果或评审报告，并明确说明为什么不能生成新版 PRD。
+
+`prd_mode` 可以包含质量摘要，但不能只输出评审；`review_mode` 可以包含改写建议，但不默认生成新版 PRD。
 
 ## 主线方法
 

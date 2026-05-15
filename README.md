@@ -147,7 +147,7 @@ Recommended input names:
 
 The first round does not always produce a PRD. If the information is insufficient, output a validation-style `meeting_digest` to identify gaps and the next research focus. If the information is sufficient, generate `<project>-PRD v0.1.md`.
 
-If only a project folder is provided, the skill defaults to detecting the latest PRD, latest validation output, latest research outline, and latest meeting notes, then chooses the appropriate mode from the user's intent. It asks for confirmation only when versions, rounds, or candidate files conflict.
+If only a project folder is provided, the skill defaults to detecting the latest PRD, latest validation output, latest research outline, and latest meeting notes, then chooses the appropriate mode from the user's intent: process meeting notes, iterate a PRD, standardize an existing PRD, or review a PRD. It asks for confirmation only when versions, rounds, or candidate files conflict.
 
 ### 1. Prepare a customer visit
 
@@ -190,7 +190,18 @@ Use $bkn-requirement to iterate the PRD from the latest materials in docs/requir
 Automatically identify the latest PRD, latest research outline, latest meeting notes, and current source manifest.
 ```
 
-### 4. Review an existing PRD
+### 4. Standardize an existing PRD or requirement document
+
+If you already have a PRD, BRD, or requirement draft and want to turn it into the standard PRD format, use:
+
+```text
+Use $bkn-requirement to turn this existing PRD into a standard PRD.
+Input file: /path/to/PRD.md
+```
+
+In this case, the skill defaults to outputting `<project>-PRD v0.1.md` or the next suggested version, with a quality summary, unresolved questions, and a `BKN_Creator` handoff summary. It falls back to a validation or review report only when the source material is insufficient.
+
+### 5. Review an existing PRD
 
 Use:
 
@@ -200,7 +211,7 @@ Use $bkn-requirement to assess whether this PRD is ready for BKN_Creator.
 
 The skill will identify missing scenario details, unclear rules, data gaps, acceptance gaps, and handoff risks.
 
-### 5. Handoff to `BKN_Creator`
+### 6. Handoff to `BKN_Creator`
 
 When the PRD is ready, use:
 
