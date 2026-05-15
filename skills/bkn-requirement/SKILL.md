@@ -79,15 +79,57 @@ docs/requirements/prj-<客户或项目简称>/
 | 验证性输出 / meeting digest | `<项目名>-prd-第X轮验证输出.md` |
 | PRD 文档 | `<项目名>-PRD vX.Y.md` |
 
+每轮输入材料应归档到：
+
+```text
+docs/requirements/prj-<客户或项目简称>/inputs/round-XX/
+```
+
+推荐命名：
+
+| 输入类型 | 命名格式 |
+|---|---|
+| 调研大纲 | `YYYYMMDD-<项目名>-第X轮-input-调研大纲.md` |
+| 会议纪要 / 录音转写 | `YYYYMMDD-<项目名>-第X轮-input-会议纪要.md` |
+| 客户补充材料 | `YYYYMMDD-<项目名>-第X轮-input-客户材料-<材料名>.<ext>` |
+| 上一版 PRD 引用 | 不重复复制；在 source manifest 中登记版本和路径 |
+
+不要移动用户原始文件。若用户指定的输入文件不在项目文件夹内，应复制到本轮 `inputs/round-XX/` 作为项目证据材料；若输入文件已在项目文件夹内，可以不复制，但必须在输出文档和 `source-manifest.md` 中记录路径。
+
+每轮处理都应生成或更新：
+
+```text
+docs/requirements/prj-<客户或项目简称>/inputs/round-XX/source-manifest.md
+```
+
+`source-manifest.md` 记录本轮原始路径、归档路径、材料类型、用途、处理时间和使用方式。模板见 `assets/source-manifest-template.md`。
+
 第一轮之后有两种输出路径：
 
 - 信息不足以形成 PRD：输出 `<项目名>-prd-第1轮验证输出.md`，用于判断缺口和下一轮调研重点。
 - 信息足以形成初版 PRD：输出 `<项目名>-PRD v0.1.md`，并标注 `Draft`、成熟度和未确认事项。
 
+## 项目上下文自动识别
+
+用户只提供项目目录时，采用宽进严出的默认行为：先自动识别最新项目上下文，再根据用户意图选择模式。不要因为用户没有手工列出全部输入文件就停止。
+
+自动识别顺序：
+
+1. 识别最新 PRD：优先选择最高版本号的 `<项目名>-PRD vX.Y.md`；
+2. 识别最新验证输出：优先选择最高轮次的 `<项目名>-prd-第X轮验证输出.md`；
+3. 识别最新调研大纲、会议纪要和本轮 `inputs/round-XX/` 材料；
+4. 若用户说“处理会议纪要 / 看本轮调研”，默认进入 `meeting_digest_mode`；
+5. 若用户说“更新 PRD / 迭代需求”，默认进入 `prd_iteration_mode`，使用最新 PRD、最新会议纪要和最新调研大纲；
+6. 若用户说“评估 PRD”，默认读取最新 PRD；
+7. 若用户说“准备拜访”，默认读取项目背景、上一轮验证输出或上一版 PRD，生成下一轮调研大纲。
+
+只有在同一目录下存在多个同版本 PRD、多个同轮次会议纪要、轮次无法判断或用户意图冲突时，才要求用户确认。本次使用了哪些文件，必须在输出开头列出“本轮输入来源”。
+
 按以下原则执行。不要跳过缺口识别：未确认问题是必需输出，不是失败。
 
 1. **整理输入材料**
    - 识别输入来源：粗略想法、访谈记录、录音转写、PRD、流程图、系统说明、数据字典、截图、历史案例。
+   - 将本轮输入文件归档或登记到项目目录的 `inputs/round-XX/source-manifest.md`。
    - 区分已确认事实、假设、冲突信息和缺失信息。
    - 如果输入是录音转写或会议纪要，读取 `references/meeting-transcript-processing.md`。
    - 如果输入是 PRD 迭代任务，必须同时识别 `research_outline`、`meeting_notes_and_materials` 和 `previous_prd`。
@@ -152,6 +194,8 @@ docs/requirements/prj-<客户或项目简称>/
 
 每一版 PRD 都应记录文档版本、当前状态、本轮输入、主要变更和待确认重点。版本记录由 Skill 自动生成，不设计 AI 工程师手工填写的内部调研记录模板。
 
+如果用户只给项目目录，三输入模型可由项目上下文自动识别补齐；如果缺少上一版 PRD，则不要强行进入 `prd_iteration_mode`，应输出 `meeting_digest_mode` 验证结果，或在信息足够时生成 `PRD v0.1 Draft`。
+
 ## 标准 PRD 结构
 
 完整 PRD 默认使用以下结构。需要完整模板时读取 `assets/requirements-template.md`。
@@ -188,6 +232,7 @@ docs/requirements/prj-<客户或项目简称>/
 - 业务验收用例是否覆盖典型问题、分析请求、决策建议、权限拒绝、数据不足和证据解释；
 - 是否包含 AI 工程师追问清单，并说明“问谁、为什么问、不确认的风险、建议问法”；
 - PRD 迭代输出是否包含本轮输入来源、变更摘要、版本记录和下一轮追问；
+- 本轮输入文件是否已复制归档或登记到 `inputs/round-XX/source-manifest.md`；
 - `BKN_Creator` 交接摘要是否仅放在末尾，并区分 `business_confirmed`、`candidate_only`、`needs_bkn_creator_decision`；
 - 没有把 `operator` 当作业务逻辑直接写入 PRD 主体；如需表达，应写为业务规则或对象逻辑属性候选，交由 `BKN_Creator` 判定。
 
@@ -205,6 +250,7 @@ docs/requirements/prj-<客户或项目简称>/
 
 - 客户现场短提纲：`assets/interview-brief-template.md`，拜访客户或准备访谈提纲时优先使用。
 - 调研准备模板：`assets/research-plan-template.md`，已有客户背景和拜访目标时使用。
+- 输入源清单模板：`assets/source-manifest-template.md`，每轮归档输入材料时使用。
 - 访谈模板：`assets/interview-template.md`，AI 工程师内部参考，不要求业务专家手工填写。
 - 需求文档模板：`assets/requirements-template.md`，输出完整 PRD 时使用。
 - 业务验收用例模板：`assets/scenario-test-case-template.md`，补充验收用例时使用。

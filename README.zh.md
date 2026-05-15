@@ -127,7 +127,25 @@ docs/requirements/prj-<客户或项目简称>/
 | 验证输出 | `<项目名>-prd-第X轮验证输出.md` |
 | PRD | `<项目名>-PRD vX.Y.md` |
 
+每一轮输入材料建议归档到：
+
+```text
+docs/requirements/prj-<客户或项目简称>/inputs/round-XX/
+```
+
+如果用户指定的输入文件不在项目文件夹内，Skill 应复制一份到本轮 `inputs/round-XX/`，不移动原始文件；如果输入文件已经在项目文件夹内，可以不复制，但应生成或更新 `source-manifest.md` 记录本轮输入来源。
+
+推荐输入文件命名：
+
+| 输入类型 | 命名格式 |
+|---|---|
+| 调研大纲 | `YYYYMMDD-<项目名>-第X轮-input-调研大纲.md` |
+| 会议纪要 | `YYYYMMDD-<项目名>-第X轮-input-会议纪要.md` |
+| 客户材料 | `YYYYMMDD-<项目名>-第X轮-input-客户材料-<材料名>.<ext>` |
+
 第一轮调研后不一定直接生成 PRD。如果信息不足，先输出验证性 `meeting_digest`，用于判断缺口和下一轮调研重点；如果信息足够，再生成 `<项目名>-PRD v0.1.md`。
+
+如果只提供项目目录，Skill 会默认识别最新 PRD、最新验证输出、最新调研大纲和最新会议纪要，并根据意图选择“处理会议纪要”“迭代 PRD”或“评估 PRD”。只有版本、轮次或文件选择存在冲突时，才需要用户确认。
 
 ### 1. 准备客户拜访
 
@@ -145,12 +163,29 @@ docs/requirements/prj-<客户或项目简称>/
 使用 $bkn-requirement，基于这份豆包会议纪要，输出本轮调研更新、待确认问题和 PRD 影响。
 ```
 
+也可以只提供项目目录或指定本轮输入文件：
+
+```text
+使用 $bkn-requirement，处理这个项目的第一轮会议纪要。
+项目目录：docs/requirements/prj-国泰海通/
+本轮调研大纲：/path/to/调研大纲.md
+本轮会议纪要：/path/to/会议纪要.md
+本轮没有上一版 PRD，请输出 <项目名>-prd-第1轮验证输出.md，不要生成 PRD。
+```
+
 ### 3. 迭代 PRD
 
 使用：
 
 ```text
 使用 $bkn-requirement，基于本轮调研大纲、会议纪要及相关材料、上一版 PRD，更新新一版 PRD，并生成版本记录。
+```
+
+如果只给项目目录：
+
+```text
+使用 $bkn-requirement，基于 docs/requirements/prj-国泰海通/ 的最新资料迭代 PRD。
+请自动识别最新 PRD、最新调研大纲、最新会议纪要和本轮输入源清单。
 ```
 
 ### 4. 评估已有 PRD
@@ -186,6 +221,7 @@ skills/bkn-requirement/
   assets/
     interview-brief-template.md
     research-plan-template.md
+    source-manifest-template.md
     interview-template.md
     requirements-template.md
     scenario-test-case-template.md

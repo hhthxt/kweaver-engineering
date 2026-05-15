@@ -127,7 +127,25 @@ Suggested names:
 | Validation output | `<project>-prd-round-X-validation.md` |
 | PRD | `<project>-PRD vX.Y.md` |
 
+Archive each round's input materials under:
+
+```text
+docs/requirements/prj-<customer-or-project-short-name>/inputs/round-XX/
+```
+
+If a user-specified input file is outside the project folder, the skill should copy it into the current round's `inputs/round-XX/` folder without moving the original file. If the input file is already inside the project folder, copying is optional, but the skill should create or update `source-manifest.md` to record the input source.
+
+Recommended input names:
+
+| Input type | Naming format |
+|---|---|
+| Research outline | `YYYYMMDD-<project>-round-X-input-research-outline.md` |
+| Meeting notes | `YYYYMMDD-<project>-round-X-input-meeting-notes.md` |
+| Customer material | `YYYYMMDD-<project>-round-X-input-customer-material-<name>.<ext>` |
+
 The first round does not always produce a PRD. If the information is insufficient, output a validation-style `meeting_digest` to identify gaps and the next research focus. If the information is sufficient, generate `<project>-PRD v0.1.md`.
+
+If only a project folder is provided, the skill defaults to detecting the latest PRD, latest validation output, latest research outline, and latest meeting notes, then chooses the appropriate mode from the user's intent. It asks for confirmation only when versions, rounds, or candidate files conflict.
 
 ### 1. Prepare a customer visit
 
@@ -145,12 +163,29 @@ Use:
 Use $bkn-requirement to process this AI meeting note and output this round's research updates, unresolved questions, and PRD impact.
 ```
 
+You can also provide a project folder or explicit files:
+
+```text
+Use $bkn-requirement to process the first-round meeting notes for this project.
+Project folder: docs/requirements/prj-guotai-haitong/
+Research outline: /path/to/research-outline.md
+Meeting notes: /path/to/meeting-notes.md
+There is no previous PRD in this round. Output <project>-prd-round-1-validation.md and do not generate a PRD.
+```
+
 ### 3. Iterate a PRD
 
 Use:
 
 ```text
 Use $bkn-requirement to update the next PRD version from this research outline, meeting notes and materials, and previous PRD, including the version record.
+```
+
+If you only provide the project folder:
+
+```text
+Use $bkn-requirement to iterate the PRD from the latest materials in docs/requirements/prj-guotai-haitong/.
+Automatically identify the latest PRD, latest research outline, latest meeting notes, and current source manifest.
 ```
 
 ### 4. Review an existing PRD
@@ -186,6 +221,7 @@ skills/bkn-requirement/
   assets/
     interview-brief-template.md
     research-plan-template.md
+    source-manifest-template.md
     interview-template.md
     requirements-template.md
     scenario-test-case-template.md

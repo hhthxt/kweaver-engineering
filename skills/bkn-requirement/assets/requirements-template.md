@@ -2,6 +2,7 @@
 
 > 使用 `$bkn-requirement` 按 V0.5 需求发现生命周期标准整理。  
 > 输入来源：`<输入材料>`。  
+> 输入源清单：`inputs/round-XX/source-manifest.md`。  
 > 文档定位：面向业务专家、产品 / 交付团队和 AI 工程师评审的标准 PRD。  
 > 说明：本文不直接生成 BKN 模型；BKN 对象、关系、逻辑属性和 Action 仅在末尾作为 `BKN_Creator` 交接摘要。
 
@@ -15,6 +16,7 @@
 | 文档版本 | v0.1 |
 | 上一版本 | 无 / v0.x |
 | 输入来源 |  |
+| 输入源清单 | `inputs/round-XX/source-manifest.md` |
 | 本轮调研大纲 / 目标 |  |
 | 本轮会议纪要及材料 |  |
 | 业务领域 |  |

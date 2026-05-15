@@ -2,6 +2,7 @@
 
 用于 V0.5 结构化输出。完整 PRD 可按需要输出：
 
+- `source_manifest`：每轮输入源归档和证据清单。
 - `research_plan`：会前调研准备和客户现场短提纲。
 - `meeting_digest`：会议纪要结构化结果。
 - `prd_revision`：PRD 迭代更新摘要和版本记录。
@@ -24,6 +25,33 @@ V0.5 输出模式枚举：
 
 ```yaml
 output_mode: intake_mode | research_plan_mode | meeting_digest_mode | prd_iteration_mode | prd_mode | review_mode | handoff_mode
+```
+
+## source_manifest
+
+```yaml
+source_manifest:
+  schema_version: bkn-requirement.v0.5
+  project:
+    name:
+    project_dir:
+    round:
+    processed_at:
+  input_sources:
+    - id:
+      type: research_outline | meeting_notes | transcript | customer_material | previous_prd | validation_output | other
+      title:
+      original_path:
+      archived_path:
+      copied_to_project: true | false
+      used_in_output: true | false
+      purpose:
+      notes:
+  output_files:
+    - type: meeting_digest | prd | research_outline | handoff | review
+      path:
+  assumptions:
+  unresolved_source_questions:
 ```
 
 映射建议：
@@ -68,6 +96,7 @@ meeting_digest:
     date:
     participants:
     source_materials:
+    source_manifest:
     research_outline:
     previous_prd:
   goal_alignment:
@@ -96,6 +125,7 @@ meeting_digest:
 prd_revision:
   schema_version: bkn-requirement.v0.5
   inputs:
+    source_manifest:
     research_outline:
     meeting_notes_and_materials:
     previous_prd:
@@ -130,6 +160,7 @@ requirement_schema:
     version:
     previous_version:
     source_inputs:
+    source_manifest:
     output_mode: intake_mode | research_plan_mode | meeting_digest_mode | prd_iteration_mode | prd_mode | review_mode | handoff_mode
     status: draft | business_review | confirmed | handoff_ready
     current_iteration_summary:
