@@ -4,6 +4,8 @@
 
 确保 `bkn-requirement` 始终服务于需求发现，而不是在 PRD 阶段提前滑向技术设计、建模设计或机器消费结构。
 
+本文件是 `references/requirement-verifier.md` 的必读输入。正式 PRD、PRD 迭代和 `BKN_Creator` 交接摘要进入 Final Gate 前，必须用本清单检查是否跑偏。
+
 ## 三条红线
 
 1. **PRD 主体必须使用业务语言。**
@@ -13,7 +15,7 @@
 3. **需求发现阶段不输出机器可读 schema。**
    - PRD 可以为后续建模做准备，但不能因此把自己写成建模输入文件。
 
-## 最终输出前自检
+## Verifier 自检
 
 ### A. 是否重新技术化
 
