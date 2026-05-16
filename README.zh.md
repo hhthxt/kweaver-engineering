@@ -29,6 +29,31 @@ KWeaver BKN 项目的 AI 工程能力工具与 Skill 包。
 
 `bkn-requirement` 专注于这个上游需求发现工作。它让 PRD 主体保持业务语言表达，并在末尾输出简洁的 `BKN_Creator` 交接摘要，供后续建模使用。
 
+## 需求发现 Harness
+
+`bkn-requirement` V0.7 使用轻量 Agentic Harness，不把生成结果直接当成最终结果：
+
+```text
+Archive / Context
+  -> Generator
+  -> Verifier
+  -> Reviser（如有必要）
+  -> Final Gate
+  -> Final Output
+```
+
+- `Generator` 负责按业务场景生成候选 PRD、PRD 迭代或 handoff。
+- `Verifier` 负责独立检查候选产物，不直接改文件。
+- `Reviser` 只根据 Verifier findings 或用户补充做定向修订。
+- `Final Gate` 判定输出是 `pass`、`warn` 还是 `fail`。
+
+Verifier 的检查分为两类：
+
+- 需求规范检查：依据 `SKILL.md`、模板、需求发现方法、质量评分和防跑偏清单。
+- BKN 方法论检查：依据 `references/bkn-methodology.md` 和 `references/bkn-requirement-ontology-discovery.md`，检查对象、事实属性、关系、指标、算子、行动、治理和 handoff 边界。
+
+这个 Harness 不要求需求发现阶段执行平台级 Eval / Trace；它只保留必要的输入归档、内部检查 findings、修订摘要和最终门禁结论。
+
 ## 服务场景
 
 在以下场景使用 `bkn-requirement`：

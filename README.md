@@ -29,6 +29,31 @@ In BKN projects, the hardest problem is often not writing the model file. The ea
 
 `bkn-requirement` focuses on this upstream discovery work. It keeps the main PRD in business language, then produces a concise `BKN_Creator` handoff summary for downstream modeling.
 
+## Requirement Discovery Harness
+
+`bkn-requirement` V0.7 uses a lightweight Agentic Harness. A generated draft is not treated as final by default:
+
+```text
+Archive / Context
+  -> Generator
+  -> Verifier
+  -> Reviser (if needed)
+  -> Final Gate
+  -> Final Output
+```
+
+- `Generator` produces a candidate PRD, PRD iteration, or handoff organized by business scenario.
+- `Verifier` independently checks the candidate output and does not edit files directly.
+- `Reviser` only makes targeted changes based on Verifier findings or explicit user input.
+- `Final Gate` decides whether the output is `pass`, `warn`, or `fail`.
+
+Verifier checks have two parts:
+
+- Requirement-spec checks: based on `SKILL.md`, templates, requirement discovery methods, quality scoring, and anti-drift rules.
+- BKN methodology checks: based on `references/bkn-methodology.md` and `references/bkn-requirement-ontology-discovery.md`, covering object, fact property, relation, metric, operator, action, governance, and handoff boundaries.
+
+This Harness does not require platform-level Eval / Trace during requirement discovery. It keeps only the necessary input archive, internal findings, revision summary, and final gate result.
+
 ## Service Scenarios
 
 Use `bkn-requirement` when you need to:
