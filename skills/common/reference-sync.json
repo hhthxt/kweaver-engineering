@@ -1,0 +1,10 @@
+{
+  "copies": [
+    {
+      "source": "skills/common/bkn-methodology.md",
+      "dest": "skills/bkn-requirement/references/bkn-methodology.md",
+      "skill": "bkn-requirement",
+      "description": "BKN methodology runtime snapshot for the requirement discovery skill."
+    }
+  ]
+}

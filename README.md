@@ -54,7 +54,7 @@ Business idea / interview / draft PRD
   -> BKN modeling, binding, testing, and validation
 ```
 
-`bkn-requirement` does not create `.bkn` files, bind data views, push networks, or execute platform operations. Those are downstream responsibilities of `BKN_Creator` and related KWeaver engineering tools.
+`bkn-requirement` does not create `.bkn` files, bind data sources or platform data views, push networks, or execute platform operations. Those are downstream responsibilities of `BKN_Creator` and related KWeaver engineering tools.
 
 ## AI Agent Skills
 
@@ -71,17 +71,21 @@ npx skills add https://github.com/kweaver-ai/kweaver-engineering \
 
 ### Skill Source
 
-This repository publishes a standard Agent Skill directory:
+This repository publishes `bkn-requirement` as a standard self-contained Agent Skill directory. The repository also keeps a shared source copy of the BKN methodology under `skills/common/` for cross-skill reuse:
 
 ```text
-skills/bkn-requirement/
-  SKILL.md
-  agents/openai.yaml
-  assets/
-  references/
+skills/
+  common/
+    bkn-methodology.md
+  bkn-requirement/
+    SKILL.md
+    agents/openai.yaml
+    assets/
+    references/
+      bkn-methodology.md
 ```
 
-Any agent that supports `SKILL.md`-based skills can install this directory. Use the `npx skills add` command above as the default installation path.
+`bkn-requirement` uses `references/bkn-methodology.md` at runtime, so `npx skills add ... --skill bkn-requirement` can install the selected skill by itself. `skills/common/bkn-methodology.md` is the repository-level source copy; maintainers should sync it into `skills/bkn-requirement/references/bkn-methodology.md` before publishing.
 
 ### Manual Fallback (Advanced)
 
@@ -92,15 +96,88 @@ git clone https://github.com/kweaver-ai/kweaver-engineering.git
 cd kweaver-engineering
 ```
 
+Expected installed layout:
+
+```text
+<skills-root>/
+  bkn-requirement/
+    SKILL.md
+    agents/
+    assets/
+    references/
+      bkn-methodology.md
+```
+
+If the installed `bkn-requirement/references/bkn-methodology.md` file is missing, the install is incomplete and should be refreshed.
+
 Cursor, Codex, OpenClaw, and other agents can discover this skill only if they support `SKILL.md`-based skills and scan the directory written by `npx skills` or by the agent configuration.
+
+### Development Guide: Common References
+
+When a new skill needs methodology or shared knowledge from `skills/common/`, use a "shared source + skill-local distribution snapshot" structure:
+
+```text
+skills/
+  common/
+    bkn-methodology.md              # shared source, edited by maintainers
+  <skill-name>/
+    SKILL.md
+    references/
+      bkn-methodology.md            # distribution snapshot used at runtime
+```
+
+Rules:
+
+- Runtime instructions in `SKILL.md` should reference only files inside the skill, such as `references/bkn-methodology.md`.
+- Published skills must not depend on `../common/...`, because `npx skills add --skill <skill-name>` may install only the selected skill directory.
+- Maintain shared methodology in `skills/common/<file>.md`, then sync it into every skill that needs it before publishing.
+- If multiple skills reuse the same common file, each skill must carry its own distribution snapshot.
+
+Register copy relationships in:
+
+```text
+skills/common/reference-sync.json
+```
+
+Example:
+
+```json
+{
+  "copies": [
+    {
+      "source": "skills/common/bkn-methodology.md",
+      "dest": "skills/bkn-requirement/references/bkn-methodology.md",
+      "skill": "bkn-requirement",
+      "description": "BKN methodology runtime snapshot for the requirement discovery skill."
+    }
+  ]
+}
+```
+
+When a new skill reuses a common file, add one entry to `copies`.
+
+Sync all registered distribution snapshots:
+
+```bash
+skills/common/sync-common-references.py
+```
+
+Before publishing, verify that distribution snapshots match the common source:
+
+```bash
+skills/common/sync-common-references.py --check
+```
 
 ### Use directly from a project
 
 You can also keep the skill in a project repository under:
 
 ```text
-skills/bkn-requirement
+skills/
+  bkn-requirement/
 ```
+
+Keeping `skills/common/bkn-methodology.md` in the same repository is recommended for development, but runtime use does not require it because `bkn-requirement` carries its own methodology snapshot.
 
 When the agent has access to the project workspace, invoke it by name:
 
@@ -219,7 +296,7 @@ When the PRD is ready, use:
 Use $bkn-requirement to generate a BKN_Creator handoff summary.
 ```
 
-The handoff summary uses a two-layer form: first a Chinese business-readable summary, then a machine-readable `scenario_handoff_matrix`.
+The handoff summary is a Chinese business-readable summary. It is not a machine-readable schema and should not turn the PRD into a modeling file.
 
 The Chinese summary first maps each scenario to:
 
@@ -238,26 +315,31 @@ It then produces the global rollup with business-readable headings:
 ## Skill Structure
 
 ```text
-skills/bkn-requirement/
-  SKILL.md
-  agents/openai.yaml
-  assets/
-    interview-brief-template.md
-    research-plan-template.md
-    source-manifest-template.md
-    interview-template.md
-    requirements-template.md
-    scenario-test-case-template.md
-    bkn-creator-handoff-template.md
-    downstream-agent-card-template.md
-  references/
-    ...
+skills/
+  common/
+    bkn-methodology.md
+  bkn-requirement/
+    SKILL.md
+    agents/openai.yaml
+    assets/
+      interview-brief-template.md
+      research-plan-template.md
+      source-manifest-template.md
+      interview-template.md
+      requirements-template.md
+      scenario-test-case-template.md
+      bkn-creator-handoff-template.md
+      downstream-agent-card-template.md
+    references/
+      bkn-methodology.md
+      ...
 ```
 
 ## Reading Path
 
 1. Read this file for an overall view of the project’s value, goals, and scope of capabilities.
 2. Open `skills/bkn-requirement/SKILL.md` and follow the assets under `skills/bkn-requirement/assets/` for templates and examples.
+3. Open `skills/bkn-requirement/references/bkn-methodology.md` for the methodology used by the installed skill. Maintainers can edit `skills/common/bkn-methodology.md` first, then sync it into the skill reference before publishing.
 
 ## Support & Contact
 

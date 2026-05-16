@@ -198,7 +198,7 @@ docs/requirements/prj-<客户或项目简称>/inputs/round-XX/
 
 ### 本体论判别纪律
 
-候选项完成分类后，必须继续通过 `references/bkn-ontology-modeling-method.md` 的本体建模门禁。分类决定“它是什么”，建模门禁继续判断“它为什么成立、边界在哪里、如何参与关系、逻辑、行动与治理”。
+候选项完成分类后，必须继续通过 `references/bkn-requirement-ontology-discovery.md` 的本体建模门禁。分类决定“它是什么”，建模门禁继续判断“它为什么成立、边界在哪里、如何参与关系、逻辑、行动与治理”。
 
 四层收敛前，必须先做“分类判定”，避免把所有业务名词都当对象。
 
