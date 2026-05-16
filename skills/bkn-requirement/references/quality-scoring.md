@@ -1,6 +1,6 @@
 # 质量评分规则
 
-用于 V0.5 的 `quality_assessment` 输出。评分目的是判断 PRD 是否足以让业务专家评审、让 AI 工程师追问、并让 `BKN_Creator` 接收，不是给 BKN 模型打分。
+用于生成中文“需求成熟度与下一步建议”。评分目的是判断 PRD 是否足以让业务专家评审、让 AI 工程师追问、并让 `BKN_Creator` 接收，不是给 BKN 模型打分；不得把评分结果输出为机器可读 schema。
 
 ## 总分计算
 
@@ -79,7 +79,7 @@ total_score =
 
 V0.5 区分两类路线：
 
-- `quality_route`：PRD 质量路线，用在 `quality_assessment.readiness_decision`。
+- PRD 质量路线：用于判断下一步需求工作。
 - `handoff_route`：BKN_Creator 下游路线，用在 `bkn_creator_handoff`。
 
 ### quality_route

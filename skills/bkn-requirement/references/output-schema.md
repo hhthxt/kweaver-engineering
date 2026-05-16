@@ -1,412 +1,68 @@
-# 输出 Schema
+# 输出结构参考（内部）
 
-用于 V0.5 结构化输出。完整 PRD 可按需要输出：
+本文件只用于 `bkn-requirement` 内部检查输出完整性，不得原样输出到 PRD 正文。
 
-- `source_manifest`：每轮输入源归档和证据清单。
-- `research_plan`：会前调研准备和客户现场短提纲。
-- `meeting_digest`：会议纪要结构化结果。
-- `prd_revision`：PRD 迭代更新摘要和版本记录。
-- `requirement_schema`：业务场景中心的结构化需求索引。
-- `quality_assessment`：PRD 质量评分与成熟度。
-- `bkn_creator_handoff`：交给 `bkn-creator` 的下游交接信息。
+PRD 面向业务评审，默认使用中文章节、中文表格和业务语言；不得在 PRD 末尾追加 YAML / JSON / 机器可读 schema。
 
-字段名保留英文，便于后续程序消费；字段说明和字段内容使用中文。
+## 输出类型
 
-## 路由字段约定
-
-V0.5 区分两类路线：
-
-| 字段 | 用途 | 枚举 |
+| 输出类型 | 用途 | 是否进入 PRD 正文 |
 |---|---|---|
-| `quality_assessment.readiness_decision.quality_route` | 判断 PRD 质量和下一步需求工作 | `hold`、`research_plan`、`interview`、`prd_iteration`、`prd_refinement`、`business_review`、`bkn_creator_handoff` |
-| `bkn_creator_handoff.handoff_route` | 判断交给 `BKN_Creator` 后的下游动作 | `hold`、`interview`、`extract_after_prd_refinement`、`extract_after_scene_split`、`create_after_business_confirmation`、`update` |
+| 输入源清单 | 记录本轮材料来源、归档路径、是否使用。 | 可作为文档信息或附录摘要，不输出机器字段。 |
+| 调研计划 | 会前准备、访谈目标、参会角色和材料索要清单。 | 独立文档。 |
+| 会议纪要整理 | 会后事实更新、冲突、待确认问题和 PRD 影响。 | 独立文档或 PRD 迭代输入。 |
+| PRD 正文 | 面向业务、产品、交付和客户评审。 | 是。 |
+| 质量评估摘要 | 说明成熟度、缺口、下一步建议。 | 用中文写入“需求成熟度与下一步建议”。 |
+| BKN_Creator 交接摘要 | 帮助后续建模理解业务。 | 只以中文业务摘要放在 PRD 末尾。 |
+| 业务验收用例 | 用业务输入和业务期望证明场景成立。 | 是。 |
 
-V0.5 输出模式枚举：
+## PRD 主结构
 
-```yaml
-output_mode: intake_mode | research_plan_mode | meeting_digest_mode | prd_iteration_mode | prd_mode | review_mode | handoff_mode
-```
+完整 PRD 默认包含：
 
-## source_manifest
+1. 文档信息
+2. 本轮变更摘要
+3. 业务背景与目标
+4. 业务用户与职责
+5. 场景总览
+6. 场景需求详述
+7. 跨场景业务规则
+8. 业务系统、表单与数据来源
+9. 权限、审批与合规要求
+10. 界面 / 交互期望
+11. 非功能需求
+12. 业务验收用例
+13. 待确认问题与访谈追问清单
+14. 需求成熟度与下一步建议
+15. BKN_Creator 交接摘要
+16. 版本记录
 
-```yaml
-source_manifest:
-  schema_version: bkn-requirement.v0.5
-  project:
-    name:
-    project_dir:
-    round:
-    source_date:
-    processed_at:
-  input_sources:
-    - id:
-      type: research_outline | meeting_notes | transcript | customer_material | previous_prd | validation_output | other
-      title:
-      original_path:
-      archived_path:
-      copied_to_project: true | false
-      archived_path_exists: true | false | not_applicable
-      used_in_output: true | false
-      purpose:
-      copy_failure_reason:
-      notes:
-  output_files:
-    - type: meeting_digest | prd | research_outline | handoff | review
-      path:
-  archive_integrity:
-    status: passed | failed | partial
-    checked_at:
-    issues:
-  assumptions:
-  unresolved_source_questions:
-```
+## BKN_Creator 交接摘要结构
 
-映射建议：
+交接摘要必须使用中文业务表达，不输出机器字段。结构为：
 
-| quality_route | handoff_route |
-|---|---|
-| `hold` | `hold` |
-| `research_plan` | `interview` |
-| `interview` | `interview` |
-| `prd_iteration` | `extract_after_prd_refinement` |
-| `prd_refinement` | `extract_after_prd_refinement` 或 `extract_after_scene_split` |
-| `business_review` | `extract_after_scene_split` |
-| `bkn_creator_handoff` | `create_after_business_confirmation` 或 `update` |
+1. 按场景收敛摘要
+   - 概念模型层：需要识别的业务对象
+   - 关系层：需要表达的业务联系
+   - 动力层：需要判断、计算或推进的业务逻辑
+   - 治理层：需要控制的责任、权限与留痕
+   - Skill / Agent 应用层：可支撑的业务任务
+2. 全局归并摘要
+   - 业务已确认内容
+   - 仍属建模候选
+   - 需下游建模阶段判定的问题
 
-## research_plan
+每一层必须说明“是什么、为什么需要、怎么做或谁负责”，不得只列对象名、关系名或动作名。
 
-```yaml
-research_plan:
-  schema_version: bkn-requirement.v0.5
-  customer:
-    name:
-    industry:
-    department_or_team:
-    interview_target_roles:
-  research_goal:
-  known_background:
-  customer_brief_questions:
-    - topic:
-      question:
-      purpose:
-  suggested_participants:
-  materials_to_request:
-  expected_post_meeting_outputs:
-```
+## 内部一致性检查
 
-## meeting_digest
+输出前检查：
 
-```yaml
-meeting_digest:
-  schema_version: bkn-requirement.v0.5
-  meeting:
-    date:
-    participants:
-    source_materials:
-    source_manifest:
-    research_outline:
-    previous_prd:
-  goal_alignment:
-    planned_questions:
-    confirmed_in_meeting:
-    not_confirmed:
-  confirmed_facts:
-  assumptions:
-  conflicts:
-  business_scenarios:
-  business_rules:
-  systems_forms_and_data:
-  acceptance_examples:
-  prd_impact:
-    add:
-    update:
-    remove:
-    affected_sections:
-  unresolved_questions:
-  next_research_focus:
-```
-
-## prd_revision
-
-```yaml
-prd_revision:
-  schema_version: bkn-requirement.v0.5
-  inputs:
-    source_manifest:
-    research_outline:
-    meeting_notes_and_materials:
-    previous_prd:
-  revision:
-    previous_version:
-    new_version:
-    document_status: draft | business_review | confirmed | handoff_ready
-    revision_summary:
-    added_confirmed_facts:
-    corrected_facts:
-    removed_or_out_of_scope:
-    affected_sections:
-    unresolved_questions:
-    next_research_focus:
-  change_log_entry:
-    version:
-    date:
-    input_sources:
-    major_changes:
-    still_unconfirmed:
-```
-
-## requirement_schema
-
-`requirement_schema` 用于把正文 PRD 固化为机器可读结构。它不替代正文，也不要求业务用户理解 BKN。
-
-```yaml
-requirement_schema:
-  schema_version: bkn-requirement.v0.5
-  document:
-    title:
-    version:
-    previous_version:
-    source_inputs:
-    source_manifest:
-    output_mode: intake_mode | research_plan_mode | meeting_digest_mode | prd_iteration_mode | prd_mode | review_mode | handoff_mode
-    status: draft | business_review | confirmed | handoff_ready
-    current_iteration_summary:
-  business_context:
-    domain:
-    use_case_name:
-    business_background:
-    business_goals:
-    success_metrics:
-    in_scope:
-    out_of_scope:
-    assumptions:
-  business_users:
-    - role:
-      responsibilities:
-      frequent_questions_or_tasks:
-      permission_boundary:
-  business_scenarios:
-    - id:
-      name:
-      primary_users:
-      business_goal:
-      priority: P0 | P1 | P2
-      maturity: R0 | R1 | R2 | R3 | R4
-      trigger:
-      current_workflow:
-      target_workflow:
-      inputs:
-      outputs:
-      business_rules:
-      exception_boundaries:
-      human_confirmation_points:
-      interface_expectations:
-      acceptance_criteria:
-  cross_scenario_rules:
-    - id:
-      name:
-      business_description:
-      affected_scenarios:
-      unresolved_points:
-  systems_forms_and_data:
-    - name:
-      type: business_system | form | data_source | report | external_service
-      business_purpose:
-      source_of_truth: true | false | unknown
-      key_fields_or_information:
-      owner:
-      refresh_frequency:
-      access_restriction:
-      quality_risks:
-  permissions_governance:
-    - capability_or_operation:
-      allowed_roles:
-      control_requirements:
-      approval_required: true | false | unknown
-      audit_requirement:
-  interface_expectations:
-    - page_or_entry:
-      key_interactions:
-      expected_outputs:
-  business_acceptance_cases:
-    - id:
-      scenario:
-      user_input:
-      expected_business_output:
-      pass_criteria:
-      required_evidence:
-  unresolved_questions:
-    - id:
-      scenario_id:
-      question_type: business_goal | current_workflow | target_workflow | business_rule | exception_boundary | human_confirmation | acceptance_example | product_scope | system_data
-      question:
-      ask_to:
-      reason_to_ask:
-      risk_if_unconfirmed:
-      suggested_wording:
-      priority: P0 | P1 | P2
-```
-
-## quality_assessment
-
-评分细则见 `references/quality-scoring.md`。
-
-```yaml
-quality_assessment:
-  schema_version: bkn-requirement.v0.5
-  requirement_maturity: R0 | R1 | R2 | R3 | R4
-  total_score: 0-100
-  readiness_decision:
-    quality_route: hold | research_plan | interview | prd_iteration | prd_refinement | business_review | bkn_creator_handoff
-    mapped_handoff_route: hold | interview | extract_after_prd_refinement | extract_after_scene_split | create_after_business_confirmation | update
-    decision_reason:
-  dimension_scores:
-    business_goal_clarity:
-      score: 0-100
-      evidence:
-      gaps:
-      next_actions:
-    scenario_completeness:
-      score: 0-100
-      evidence:
-      gaps:
-      next_actions:
-    workflow_and_decision_clarity:
-      score: 0-100
-      evidence:
-      gaps:
-      next_actions:
-    business_rule_clarity:
-      score: 0-100
-      evidence:
-      gaps:
-      next_actions:
-    system_data_readiness:
-      score: 0-100
-      evidence:
-      gaps:
-      next_actions:
-    governance_and_permission_readiness:
-      score: 0-100
-      evidence:
-      gaps:
-      next_actions:
-    acceptance_case_coverage:
-      score: 0-100
-      evidence:
-      gaps:
-      next_actions:
-    bkn_creator_handoff_quality:
-      score: 0-100
-      evidence:
-      gaps:
-      next_actions:
-  critical_gaps:
-    - gap:
-      impact:
-      owner:
-      priority: P0 | P1 | P2
-  promotion_criteria:
-    next_maturity:
-    required_evidence:
-```
-
-## bkn_creator_handoff
-
-```yaml
-bkn_creator_handoff:
-  schema_version: bkn-requirement.v0.5
-  source_prd:
-  handoff_route: hold | interview | extract_after_prd_refinement | extract_after_scene_split | create_after_business_confirmation | update
-  requirement_maturity: R0 | R1 | R2 | R3 | R4
-  quality_score:
-  business_domain:
-  use_case_name:
-  candidate_network_name:
-  scenario_handoff_matrix:
-    - scenario_id:
-      scenario_name:
-      business_goal:
-      confirmed_business_rules:
-      acceptance_cases:
-      conceptual_model_layer:
-        - name:
-          scenario_id:
-          type_hint:
-          confirmation_status: confirmed | candidate | unresolved | rejected
-          evidence_ref:
-      relationship_layer:
-        - name:
-          scenario_id:
-          source_business_term:
-          target_business_term:
-          business_meaning:
-          confirmation_status: confirmed | candidate | unresolved | rejected
-          evidence_ref:
-      dynamic_layer:
-        - name:
-          scenario_id:
-          kind: metric | calculation | decision | action_draft | action_execute | state_change
-          trigger:
-          human_confirmation:
-          confirmation_status: confirmed | candidate | unresolved | rejected
-          evidence_ref:
-      governance_layer:
-        - name:
-          scenario_id:
-          permission_subject:
-          controlled_action:
-          approval_or_audit:
-          confirmation_status: confirmed | candidate | unresolved | rejected
-          evidence_ref:
-      skill_agent_layer:
-        - user_task:
-          scenario_id:
-          agent_capability:
-          expected_answer_or_action:
-          acceptance_case_ref:
-          confirmation_status: confirmed | candidate | unresolved | rejected
-  business_confirmed:
-    business_scenarios:
-    business_objects:
-    business_rules:
-    business_systems:
-    business_acceptance_cases:
-  candidate_only:
-    candidate_objects:
-    candidate_relations:
-    candidate_logic_properties:
-    candidate_actions:
-    candidate_risk_types:
-    candidate_skills:
-    data_view_candidates:
-    external_writeback_systems:
-  needs_bkn_creator_decision:
-    internal_modeling_questions:
-  critical_gaps:
-  requires_business_confirmation:
-  schema_validation:
-    missing_required_fields:
-    inconsistent_fields:
-    traceability_issues:
-    validation_notes:
-  suggested_next_step:
-```
-
-`business_confirmed`、`candidate_only` 和 `needs_bkn_creator_decision` 必须由 `scenario_handoff_matrix` 全局归并得到。每个四层候选项都必须有 `scenario_id`、`evidence_ref` 和 `confirmation_status`；无法追溯到场景、规则或验收用例的内容不得进入 `business_confirmed`。
-
-## 业务验收用例
-
-```yaml
-business_acceptance_case:
-  id:
-  scenario:
-  user_role:
-  user_input:
-  expected_business_output:
-  required_evidence:
-  pass_criteria:
-  negative_or_boundary_condition:
-```
-
-如果确实需要给 `bkn-creator` 或 `bkn-test` 生成技术测试，可在 handoff 后附加候选测试信息，但不要替代业务验收用例。
+- 输入材料是否已记录来源和归档状态；
+- PRD 是否按业务场景组织，而不是按对象 / 关系 / Action 组织；
+- 每个 P0/P1 场景是否有业务目标、决策点、操作闭环和验收用例；
+- 场景收敛是否通过 `references/bkn-ontology-modeling-method.md`；
+- `业务已确认内容` 是否只包含有业务证据支撑的内容；
+- `仍属建模候选` 是否与已确认内容分开；
+- `需下游建模阶段判定的问题` 是否明确说明判定原因；
+- 是否没有输出 YAML / JSON / 机器可读 schema。
