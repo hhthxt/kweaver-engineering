@@ -18,7 +18,7 @@ KWeaver BKN 项目的 AI 工程能力工具与 Skill 包。
 
 `bkn-ontology-builder` 是面向 KWeaver BKN 项目的本体建模方案 Skill。它把 PRD、会议纪要、流程说明、系统/数据材料、`BKN_Creator` 交接摘要或已有方案整理为业务可评审的本体建模方案。
 
-它是需求发现和正式 BKN 建模之间的可选桥梁，不创建 `.bkn` 文件，不绑定数据视图，不推送知识网络，也不执行平台操作。
+它是需求发现和正式 BKN 建模之间的可选桥梁；`refine_mode` 也支持基于 BKN 构建、数据绑定、Action/Skill 实现、测试、Trace 或 Eval 反馈做实现后反向修订。它不创建 `.bkn` 文件，不绑定数据视图，不推送知识网络，也不执行平台操作。
 
 ## 背景
 
@@ -103,7 +103,7 @@ npx skills add https://github.com/kweaver-ai/kweaver-engineering \
   --skill bkn-ontology-builder
 ```
 
-`bkn-ontology-builder` — 面向 KWeaver BKN 项目的本体建模方案 Skill，基于 PRD、会议纪要、流程说明、系统/数据材料、交接摘要或已有方案生成、修订或对比业务可评审的本体建模方案。参见 `skills/bkn-ontology-builder/SKILL.md`。
+`bkn-ontology-builder` — 面向 KWeaver BKN 项目的本体建模方案 Skill，基于 PRD、会议纪要、流程说明、系统/数据材料、交接摘要、已有方案或实现反馈生成、修订或对比业务可评审的本体建模方案。参见 `skills/bkn-ontology-builder/SKILL.md`。
 
 `npx skills` 会把指定 Skill 安装到开发者当前 AI Agent 环境支持的 skills 位置。安装完成后，重启 Agent 会话，让 Skill 列表刷新。
 

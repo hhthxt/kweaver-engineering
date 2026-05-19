@@ -18,7 +18,7 @@ It is designed for the stage before formal BKN modeling.
 
 `bkn-ontology-builder` is an ontology scheme builder skill for KWeaver BKN projects. It turns PRDs, meeting notes, process descriptions, system/data materials, `BKN_Creator` handoff summaries, or existing schemes into a business-reviewable ontology modeling scheme.
 
-It is an optional bridge between requirement discovery and formal BKN modeling. It does not create `.bkn` files, bind data views, push networks, or perform platform operations.
+It is an optional bridge between requirement discovery and formal BKN modeling. Its `refine_mode` also supports implementation-informed refinement from BKN construction, data binding, Action/Skill implementation, testing, Trace, or Eval feedback. It does not create `.bkn` files, bind data views, push networks, or perform platform operations.
 
 ## Background
 
@@ -103,7 +103,7 @@ npx skills add https://github.com/kweaver-ai/kweaver-engineering \
   --skill bkn-ontology-builder
 ```
 
-`bkn-ontology-builder` — an ontology scheme builder skill for KWeaver BKN projects. It generates, refines, or compares business-reviewable ontology modeling schemes from PRDs, meeting notes, process descriptions, system/data materials, handoff summaries, or existing schemes. See `skills/bkn-ontology-builder/SKILL.md`.
+`bkn-ontology-builder` — an ontology scheme builder skill for KWeaver BKN projects. It generates, refines, or compares business-reviewable ontology modeling schemes from PRDs, meeting notes, process descriptions, system/data materials, handoff summaries, existing schemes, or implementation feedback. See `skills/bkn-ontology-builder/SKILL.md`.
 
 `npx skills` installs the selected skill into the skills location supported by the developer's current AI agent environment. Restart your agent session after installation so the skill list refreshes.
 

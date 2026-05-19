@@ -138,7 +138,57 @@
 
 保留章节时，必须有材料依据或明确业务假设。没有材料支撑的内容应放入“建模候选”或“待业务确认”，不能写成已确认事实。
 
-## 10. Verifier Rubric
+## 10. refine_mode 修订来源
+
+`refine_mode` 不拆成多个顶层模式，但必须识别修订依据。一次修订可以同时包含多类依据。
+
+| 子类型 | 触发 | 主要输入 | 输出重点 |
+|---|---|---|---|
+| `business_feedback_refine` | 业务方评审后补充事实、修改口径、确认或否定候选项 | 业务评审意见、会议纪要、补充材料、PRD vX.Y | 修订对象、关系、场景路径、确认状态和待确认问题 |
+| `verifier_refine` | Verifier findings 指出 hard stop、major 或 minor | `*-verifier-findings.md`、候选方案 | 定向修订 findings，不重新发散生成 |
+| `implementation_feedback_refine` | BKN 构建、数据绑定、Action / Skill 实现、测试验证或运行证据反向暴露建模问题 | `.bkn`、BKN_Creator 输出、数据绑定结果、Action / Skill 实现说明、测试报告、Eval、Trace、缺陷清单、运行审计 | 将实现验证中的对象边界、关系方向、Action 边界、Skill 契约、治理和证据链变化回填到本体建模方案 |
+
+### implementation_feedback_refine 协议
+
+实现反馈修订按以下顺序处理：
+
+```text
+已有本体建模方案
++ BKN 构建结果 / .bkn / BKN_Creator 输出
++ 数据绑定 / 字段映射 / 实体对齐结果
++ Action / Skill 实现结果
++ 测试用例 / 验证报告 / Trace / Eval / 缺陷清单
+→ 实现差异分析
+→ 方案修订
+→ Verifier
+→ Reviser（如有必要）
+→ Final Gate
+→ 修订版 / 交付归档版方案
+```
+
+必须检查：
+
+- 哪些候选对象在实现中被证明应升格为对象，哪些应降级为属性、指标、结果或状态；
+- 哪些关系方向、关系属性、快捷语义关系或底层证据对象需要调整；
+- 哪些关系因状态、审批、恢复、审计或生命周期要求需要对象化；
+- 哪些 Prompt / Skill 内的逻辑应沉淀为指标、算子、解释逻辑或治理策略；
+- 哪些 Action 在实现后需要补充 dry-run、审批、权限、回滚、失败处理、通知或审计；
+- 数据绑定是否暴露主键、字段口径、实体对齐、刷新频率、质量风险或访问权限问题；
+- 测试失败是否说明对象抽象、关系方向、逻辑归属或行动边界错误；
+- Trace / Eval 是否需要补充业务证据链、人工确认点、拒绝自动化边界或运行审计设计；
+- 实现结果中哪些内容只是平台工程实现，不应反向污染业务本体方案。
+
+确认状态重新分层：
+
+| 分类 | 进入条件 |
+|---|---|
+| 实现已验证 | 已在 BKN、绑定、Action / Skill 或测试中通过，并与业务口径一致 |
+| 实现暴露需修订 | 实现中发现方案对象、关系、逻辑、Action 或治理边界不准确 |
+| 实现 workaround | 工程临时处理，不应直接写成本体事实 |
+| 待业务复核 | 实现可行但业务口径、权限、审批或验收仍未确认 |
+| 待下游平台判定 | 属于平台能力、数据接入、Trace / Eval 或工具绑定边界 |
+
+## 11. Verifier Rubric
 
 `hard_stop`：
 
@@ -168,7 +218,7 @@
 
 Verifier 输出必须独立成文，不直接改候选方案。若在项目目录落盘，使用 `assets/verifier-findings-template.md`，命名为 `<项目名>-本体建模方案 vX.Y-verifier-findings.md`。
 
-## 11. 修订规则
+## 12. 修订规则
 
 Reviser 只根据 findings 定向修订：
 
@@ -179,7 +229,7 @@ Reviser 只根据 findings 定向修订：
 5. 修订后重新执行 Verifier；
 6. 最多自动修订 2 轮。
 
-## 12. Final Gate 口径
+## 13. Final Gate 口径
 
 `pass`：无 hard stop，major 已处理或能解释为不影响业务评审。
 
@@ -189,7 +239,7 @@ Reviser 只根据 findings 定向修订：
 
 Final Gate 输出必须独立成文。若在项目目录落盘，使用 `assets/final-gate-template.md`，命名为 `<项目名>-本体建模方案 vX.Y-final-gate.md`。
 
-## 13. 标准 Harness 产物
+## 14. 标准 Harness 产物
 
 正式 `scheme_mode` 或 `refine_mode` 写入项目目录时，保持以下文件边界：
 
@@ -205,3 +255,17 @@ Final Gate 输出必须独立成文。若在项目目录落盘，使用 `assets/
 如果 Final Gate 为 `warn`，最终方案文件名应保留 `candidate` 或在文档状态中明确 `Candidate`，不得改写成 `Final`。
 
 开发测试可额外输出 `*-harness-run-report.md`，用于记录一次样例运行覆盖了哪些环节和发现了哪些 Skill 资产问题。该文件不属于业务交付链路，不能替代 Verifier findings 或 Final Gate。
+
+实现反馈修订可额外输出：
+
+```text
+<项目名>-本体建模方案 vX.Y-实现反馈修订说明.md
+```
+
+若修订后用于项目交付归档，可输出：
+
+```text
+<项目名>-本体建模方案 vX.Y-交付归档版.md
+```
+
+交付归档版必须同时说明“业务评审口径”和“实现验证口径”的差异，不能把实现 workaround 伪装成业务确认事实。
