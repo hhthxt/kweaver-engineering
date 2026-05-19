@@ -6,108 +6,107 @@
 
 KWeaver BKN 项目的 AI 工程能力工具与 Skill 包。
 
-## 可用 Skill
+## Skill 总览
 
-### `bkn-requirement`
+本仓库当前提供两个面向 KWeaver BKN 项目的 Agent Skill：
 
-`bkn-requirement` 是面向 KWeaver BKN 项目的需求发现 Skill。它帮助 AI 工程师和业务专家把业务访谈、会议纪要、PRD 草稿、BRD、流程说明、系统材料和数据材料整理成以业务场景为中心的标准 PRD。
+| Skill | 定位 | 主要交付物 | 不做什么 |
+|---|---|---|---|
+| `bkn-requirement` | 需求发现与 PRD 整理 | 调研提纲、会议 digest、场景中心 PRD、`BKN_Creator` 交接摘要 | 不生成 `.bkn`，不绑定数据，不推送平台 |
+| `bkn-ontology-builder` | 本体建模方案生成与修订 | 业务可评审的本体建模方案、Verifier findings、Final Gate、实现反馈修订说明 | 不生成 `.bkn`，不绑定数据，不推送平台 |
 
-它适用于正式 BKN 建模之前的需求发现阶段。
-
-### `bkn-ontology-builder`
-
-`bkn-ontology-builder` 是面向 KWeaver BKN 项目的本体建模方案 Skill。它把 PRD、会议纪要、流程说明、系统/数据材料、`BKN_Creator` 交接摘要或已有方案整理为业务可评审的本体建模方案。
-
-它是需求发现和正式 BKN 建模之间的可选桥梁；`refine_mode` 也支持基于 BKN 构建、数据绑定、Action/Skill 实现、测试、Trace 或 Eval 反馈做实现后反向修订。它不创建 `.bkn` 文件，不绑定数据视图，不推送知识网络，也不执行平台操作。
-
-## 背景
-
-在 BKN 项目里，最难的问题往往不是直接编写模型文件，而是先把业务需求讲清楚：
-
-- 要解决哪个业务场景？
-- 谁使用这个能力？
-- 当前业务流程是什么？
-- 用户期望输入什么、输出什么？
-- 哪些业务规则和异常边界必须考虑？
-- 涉及哪些业务系统、表单、报表和数据来源？
-- 权限、审批、审计边界是什么？
-- 业务用户如何验收结果？
-
-`bkn-requirement` 专注于这个上游需求发现工作。它让 PRD 主体保持业务语言表达，并在末尾输出简洁的 `BKN_Creator` 交接摘要，供后续建模使用。
-
-## 需求发现 Harness
-
-`bkn-requirement` V0.7 使用轻量 Agentic Harness，不把生成结果直接当成最终结果：
+推荐使用链路：
 
 ```text
-Archive / Context
-  -> Generator
-  -> Verifier
-  -> Reviser（如有必要）
-  -> Final Gate
-  -> Final Output
-```
-
-- `Generator` 负责按业务场景生成候选 PRD、PRD 迭代或 handoff。
-- `Verifier` 负责独立检查候选产物，不直接改文件。
-- `Reviser` 只根据 Verifier findings 或用户补充做定向修订。
-- `Final Gate` 判定输出是 `pass`、`warn` 还是 `fail`。
-
-Verifier 的检查分为两类：
-
-- 需求规范检查：依据 `SKILL.md`、模板、需求发现方法、质量评分和防跑偏清单。
-- BKN 方法论检查：依据 `references/bkn-methodology.md` 和 `references/bkn-requirement-ontology-discovery.md`，检查对象、事实属性、关系、指标、算子、行动、治理和 handoff 边界。
-
-这个 Harness 不要求需求发现阶段执行平台级 Eval / Trace；它只保留必要的输入归档、内部检查 findings、修订摘要和最终门禁结论。若 PRD、PRD 迭代或 handoff 写入项目目录，应同步写入同名 `*-verification-findings.md`，但 findings 不进入 PRD 正文。
-
-## 服务场景
-
-在以下场景使用 `bkn-requirement`：
-
-- 准备业务专家访谈。
-- 处理访谈纪要或会议录音转写。
-- 将粗略想法、PRD、BRD 或流程文档整理为标准 PRD。
-- 将复杂需求拆成一个个业务场景。
-- 识别缺失的业务规则、数据来源、权限要求和验收样例。
-- 为 AI 工程师生成追问清单。
-- 生成交给 `BKN_Creator` 的交接摘要。
-
-## 与 `BKN_Creator` 的关系
-
-`bkn-requirement` 与 `BKN_Creator` 是前后衔接关系：
-
-```text
-业务想法 / 访谈 / PRD 草稿
+业务材料 / 访谈 / PRD 草稿
   -> bkn-requirement
-  -> 业务场景中心 PRD
-  -> BKN_Creator 交接摘要
+  -> 场景中心 PRD + BKN_Creator 交接摘要
+  -> 可选 bkn-ontology-builder
+  -> 业务可评审的本体建模方案
   -> BKN_Creator
   -> BKN 建模、绑定、测试与验证
+  -> 可选 bkn-ontology-builder refine_mode
+  -> 实现反馈后的本体建模方案修订 / 交付归档版
 ```
 
-`bkn-requirement` 不创建 `.bkn` 文件，不绑定数据来源或平台数据视图，不推送知识网络，也不执行平台操作。这些是 `BKN_Creator` 和相关 KWeaver 工程工具的下游职责。
+两个 Skill 都使用轻量 Agentic Harness：
 
-## AI Agent Skills
+```text
+Archive / Context -> Generator -> Verifier -> Reviser（如有必要）-> Final Gate -> Final Output
+```
 
-使用 `npx skills` 从本仓库安装 Skill：
+## 安装
+
+使用 `npx skills` 从本仓库安装指定 Skill：
 
 ```bash
 npx skills add https://github.com/kweaver-ai/kweaver-engineering \
   --skill bkn-requirement
 ```
 
-`bkn-requirement` — 面向 KWeaver BKN 项目的需求发现 Skill，帮助 AI 工程师把访谈、会议纪要、PRD 草稿、BRD、流程说明和系统/数据材料整理为业务场景中心 PRD，并输出 `BKN_Creator` 交接摘要。参见 `skills/bkn-requirement/SKILL.md`。
-
 ```bash
 npx skills add https://github.com/kweaver-ai/kweaver-engineering \
   --skill bkn-ontology-builder
 ```
 
-`bkn-ontology-builder` — 面向 KWeaver BKN 项目的本体建模方案 Skill，基于 PRD、会议纪要、流程说明、系统/数据材料、交接摘要、已有方案或实现反馈生成、修订或对比业务可评审的本体建模方案。参见 `skills/bkn-ontology-builder/SKILL.md`。
-
 `npx skills` 会把指定 Skill 安装到开发者当前 AI Agent 环境支持的 skills 位置。安装完成后，重启 Agent 会话，让 Skill 列表刷新。
 
-### Skill 源码位置
+## `bkn-requirement`
+
+`bkn-requirement` 用于正式 BKN 建模之前的需求发现。它帮助 AI 工程师和业务专家把业务访谈、会议纪要、PRD 草稿、BRD、流程说明、系统材料和数据材料整理成以业务场景为中心的标准 PRD。
+
+### 服务场景
+
+- 准备业务专家访谈和材料索要清单。
+- 处理访谈纪要、会议录音转写或 AI 会议纪要。
+- 将粗略想法、PRD、BRD 或流程文档整理为标准 PRD。
+- 将复杂需求拆成可验收业务场景。
+- 识别缺失的业务规则、数据来源、权限要求和验收样例。
+- 生成追问清单、业务验收用例和 `BKN_Creator` 交接摘要。
+
+### 使用示例
+
+```text
+使用 $bkn-requirement，基于以下客户背景生成一页客户调研提纲。
+```
+
+```text
+使用 $bkn-requirement，基于本轮调研大纲、会议纪要及相关材料、上一版 PRD，更新新一版 PRD，并生成版本记录。
+```
+
+```text
+使用 $bkn-requirement，输出 BKN_Creator 交接摘要。
+```
+
+## `bkn-ontology-builder`
+
+`bkn-ontology-builder` 用于把 PRD、会议纪要、流程说明、系统/数据材料、`BKN_Creator` 交接摘要或已有方案整理为业务可评审的本体建模方案。它是需求发现和正式 BKN 建模之间的可选桥梁。
+
+`refine_mode` 还支持基于 BKN 构建、数据绑定、Action / Skill 实现、测试、Trace 或 Eval 反馈做实现后反向修订。本体建模方案可以作为项目交付物持续提炼，但本 Skill 仍不创建 `.bkn`、不绑定数据视图、不推送知识网络，也不执行平台操作。
+
+### 服务场景
+
+- 基于 PRD、handoff、会议纪要或业务材料生成本体建模方案。
+- 基于已有本体建模方案做业务反馈修订。
+- 基于 Verifier findings 定向修订候选方案。
+- 基于 BKN 构建、数据绑定、Action / Skill 实现、测试、Trace / Eval 结果做实现反馈修订。
+- 对比 PRD 与本体建模方案，输出差异、缺口和补强建议。
+
+### 使用示例
+
+```text
+使用 $bkn-ontology-builder，基于这份 PRD 和 BKN_Creator 交接摘要生成本体建模方案。
+```
+
+```text
+使用 $bkn-ontology-builder，基于已有本体建模方案和 Verifier findings 输出修订版。
+```
+
+```text
+使用 $bkn-ontology-builder，基于已构建的 .bkn、数据绑定结果、Action/Skill 实现和测试报告，反向修订本体建模方案。
+```
+
+## Skill 源码与安装结构
 
 本仓库发布的是一个标准、自包含的 Agent Skill 目录，同时在 `skills/common/` 下保留一份公共源方法论，供多个 Skill 复用和维护：
 
@@ -130,6 +129,43 @@ skills/
 ```
 
 每个 Skill 运行时都引用自身的 `references/bkn-methodology.md`，因此 `npx skills add ... --skill <skill-name>` 只安装一个 Skill 目录也可以完整运行。`skills/common/bkn-methodology.md` 是仓库级公共源文件；维护者发布前应把它同步到各 Skill 的 `references/bkn-methodology.md`。
+
+## `bkn-methodology.md`
+
+`bkn-methodology.md` 是两个 Skill 共享的 BKN 方法论基座。它不是独立 Skill，也不是 `.bkn` 语法手册，而是统一 Agent 在 BKN 项目里判断对象、关系、事实、指标、算子、Action、治理和 Skill / Agent 契约边界的参考规则。
+
+它主要回答：
+
+- 什么可以成为业务对象，什么应降级为属性、指标、结果、状态或规则；
+- 关系如何表达业务路径，而不是字段 join；
+- 查询、计算、解释逻辑、Skill / Agent 任务和有副作用 Action 如何区分；
+- 稳定事实、运行状态、事件记录和审计记录如何分离；
+- 权限、审批、Trace、Eval、证据链和人工确认点如何进入治理边界。
+
+仓库中保留一份公共源：
+
+```text
+skills/common/bkn-methodology.md
+```
+
+每个可单独安装的 Skill 都携带自己的运行时快照：
+
+```text
+skills/bkn-requirement/references/bkn-methodology.md
+skills/bkn-ontology-builder/references/bkn-methodology.md
+```
+
+维护时先改 `skills/common/bkn-methodology.md`，再运行：
+
+```bash
+skills/common/sync-common-references.py
+```
+
+发布前用以下命令确认所有快照一致：
+
+```bash
+skills/common/sync-common-references.py --check
+```
 
 ### 手工安装备用方式（高级）
 
@@ -242,9 +278,7 @@ skills/
 使用 $bkn-ontology-builder，基于这份 PRD 和交接摘要生成本体建模方案。
 ```
 
-## 如何使用
-
-### 0. 项目资料目录
+## 项目目录与输入归档
 
 每个客户或项目建议建立共享项目目录，避免需求发现、本体建模、BKN 交付参考、售前和交付资料混在一起：
 
@@ -260,6 +294,10 @@ docs/prj-<客户或项目简称>/
 | 调研备忘 | `YYYYMMDD-<项目名>-第X轮现场交流调研备忘.md` |
 | 验证输出 | `<项目名>-prd-第X轮验证输出.md` |
 | PRD | `<项目名>-PRD vX.Y.md` |
+| 本体建模方案 | `<项目名>-本体建模方案 vX.Y.md` 或 `<项目名>-本体建模方案 vX.Y-candidate.md` |
+| Verifier findings | `<项目名>-本体建模方案 vX.Y-verifier-findings.md` |
+| Final Gate | `<项目名>-本体建模方案 vX.Y-final-gate.md` |
+| 实现反馈修订说明 | `<项目名>-本体建模方案 vX.Y-实现反馈修订说明.md` |
 
 每一轮输入材料建议归档到：
 
@@ -281,93 +319,7 @@ docs/prj-<客户或项目简称>/inputs/round-XX/
 
 第一轮调研后不一定直接生成 PRD。如果信息不足，先输出验证性 `meeting_digest`，用于判断缺口和下一轮调研重点；如果信息足够，再生成 `<项目名>-PRD v0.1.md`。
 
-如果只提供项目目录，Skill 会默认识别最新 PRD、最新验证输出、最新调研大纲和最新会议纪要，并根据意图选择“处理会议纪要”“迭代 PRD”“整理为标准 PRD”或“评估 PRD”。只有版本、轮次或文件选择存在冲突时，才需要用户确认。
-
-### 1. 准备客户拜访
-
-使用：
-
-```text
-使用 $bkn-requirement，基于以下客户背景生成一页客户调研提纲。
-```
-
-### 2. 处理会议纪要
-
-使用：
-
-```text
-使用 $bkn-requirement，基于这份豆包会议纪要，输出本轮调研更新、待确认问题和 PRD 影响。
-```
-
-也可以只提供项目目录或指定本轮输入文件：
-
-```text
-使用 $bkn-requirement，处理这个项目的第一轮会议纪要。
-项目目录：docs/prj-国泰海通/
-本轮调研大纲：/path/to/调研大纲.md
-本轮会议纪要：/path/to/会议纪要.md
-本轮没有上一版 PRD，请输出 <项目名>-prd-第1轮验证输出.md，不要生成 PRD。
-```
-
-### 3. 迭代 PRD
-
-使用：
-
-```text
-使用 $bkn-requirement，基于本轮调研大纲、会议纪要及相关材料、上一版 PRD，更新新一版 PRD，并生成版本记录。
-```
-
-如果只给项目目录：
-
-```text
-使用 $bkn-requirement，基于 docs/prj-国泰海通/ 的最新资料迭代 PRD。
-请自动识别最新 PRD、最新调研大纲、最新会议纪要和本轮输入源清单。
-```
-
-### 4. 整理已有 PRD / 需求文档
-
-如果已有一份 PRD、BRD 或需求草稿，希望整理成标准 PRD，使用：
-
-```text
-使用 $bkn-requirement，基于这份已有 PRD 整理为标准 PRD。
-输入文件：/path/to/PRD.md
-```
-
-这种情况下，Skill 默认输出 `<项目名>-PRD v0.1.md` 或下一建议版本，并在文档中附质量摘要、按场景组织的业务化待确认问题。对每个核心场景，PRD 正文会先说明该场景需要识别哪些业务对象、表达哪些业务联系、完成哪些业务判断 / 计算 / 推进逻辑、控制哪些责任与留痕，再在文末形成 `BKN_Creator` 交接摘要。只有信息不足时，才降级输出验证性结果或评审报告。
-
-### 5. 评估已有 PRD
-
-使用：
-
-```text
-使用 $bkn-requirement，评估这份 PRD 是否可以进入 BKN_Creator。
-```
-
-Skill 会识别场景缺口、规则不清、数据缺口、验收缺口和交接风险。
-
-### 6. 交接给 `BKN_Creator`
-
-当 PRD 已准备好时，使用：
-
-```text
-使用 $bkn-requirement，输出 BKN_Creator 交接摘要。
-```
-
-交接摘要采用中文业务可读表达，不输出机器可读 schema，也不把 PRD 变成建模文件。
-
-中文摘要先按场景收敛：
-
-- 需要识别的业务对象（概念模型层）。
-- 需要表达的业务联系（关系层）。
-- 需要判断、计算或推进的业务逻辑（动力层）。
-- 需要控制的责任、权限与留痕（治理层）。
-- 可由 Skill / Agent 支撑的业务任务。
-
-然后再用中文标题做全局归并：
-
-- 业务已确认内容：业务已确认的场景、对象、规则、系统和验收用例。
-- 仍属建模候选：AI 工程师根据 PRD 推导出的建模候选项。
-- 需下游建模阶段判定的问题：留给 `BKN_Creator` 继续判断的问题。
+如果只提供项目目录，Skill 会默认识别最新 PRD、最新验证输出、最新本体建模方案、最新调研大纲、最新会议纪要和本轮输入源清单，并根据意图选择合适模式。只有版本、轮次或文件选择存在冲突时，才需要用户确认。
 
 ## Skill 结构
 
@@ -379,24 +331,23 @@ skills/
     SKILL.md
     agents/openai.yaml
     assets/
-      interview-brief-template.md
-      research-plan-template.md
-      source-manifest-template.md
-      interview-template.md
-      requirements-template.md
-      scenario-test-case-template.md
-      bkn-creator-handoff-template.md
-      downstream-agent-card-template.md
     references/
       bkn-methodology.md
-      ...
+  bkn-ontology-builder/
+    SKILL.md
+    agents/openai.yaml
+    assets/
+    references/
+      bkn-methodology.md
 ```
 
 ## 开源社区阅读路径
 
 1. 先读本文件，从总体上了解项目价值、目标与能力范围。
-2. 打开 `skills/bkn-requirement/SKILL.md`，并配合 `skills/bkn-requirement/assets/` 下的模板与示例使用。
-3. 判断对象、指标、算子、行动和治理边界时，读取 `skills/bkn-requirement/references/bkn-methodology.md`。维护者可以先编辑 `skills/common/bkn-methodology.md`，发布前同步到该文件。
+2. 需要做需求发现时，打开 `skills/bkn-requirement/SKILL.md`，按需读取该 Skill 的 `assets/` 和 `references/`。
+3. 需要生成或修订本体建模方案时，打开 `skills/bkn-ontology-builder/SKILL.md`，按需读取该 Skill 的模板和方法参考。
+4. 判断对象、关系、指标、算子、Action、治理和 Skill / Agent 边界时，读取对应 Skill 内的 `references/bkn-methodology.md`。
+5. 维护公共方法论时，先编辑 `skills/common/bkn-methodology.md`，再同步到各 Skill 的运行时快照。
 
 ## 支持与联系
 

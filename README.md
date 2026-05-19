@@ -6,110 +6,109 @@
 
 AI engineering capability tools and skill packages for KWeaver BKN projects.
 
-## Available Skills
+## Skill Overview
 
-### `bkn-requirement`
+This repository provides two Agent Skills for KWeaver BKN projects:
 
-`bkn-requirement` is a requirement discovery skill for KWeaver BKN projects. It helps AI engineers and business experts turn interviews, meeting notes, draft PRDs, BRDs, process descriptions, and system/data materials into a business-scenario-centered PRD.
+| Skill | Role | Main outputs | Out of scope |
+|---|---|---|---|
+| `bkn-requirement` | Requirement discovery and PRD structuring | Research outlines, meeting digests, scenario-centered PRDs, `BKN_Creator` handoff summaries | Does not create `.bkn`, bind data, or push platform resources |
+| `bkn-ontology-builder` | Ontology modeling scheme generation and refinement | Business-reviewable ontology schemes, Verifier findings, Final Gate reports, implementation feedback refinement notes | Does not create `.bkn`, bind data, or push platform resources |
 
-It is designed for the stage before formal BKN modeling.
-
-### `bkn-ontology-builder`
-
-`bkn-ontology-builder` is an ontology scheme builder skill for KWeaver BKN projects. It turns PRDs, meeting notes, process descriptions, system/data materials, `BKN_Creator` handoff summaries, or existing schemes into a business-reviewable ontology modeling scheme.
-
-It is an optional bridge between requirement discovery and formal BKN modeling. Its `refine_mode` also supports implementation-informed refinement from BKN construction, data binding, Action/Skill implementation, testing, Trace, or Eval feedback. It does not create `.bkn` files, bind data views, push networks, or perform platform operations.
-
-## Background
-
-In BKN projects, the hardest problem is often not writing the model file. The earlier problem is making the business requirement clear enough:
-
-- What business scenario is being solved?
-- Who uses the capability?
-- What is the current workflow?
-- What inputs and outputs does the user expect?
-- What business rules and exception cases matter?
-- Which systems, forms, reports, and data sources are involved?
-- What permissions, approvals, and audit boundaries are required?
-- How should the result be accepted by business users?
-
-`bkn-requirement` focuses on this upstream discovery work. It keeps the main PRD in business language, then produces a concise `BKN_Creator` handoff summary for downstream modeling.
-
-## Requirement Discovery Harness
-
-`bkn-requirement` V0.7 uses a lightweight Agentic Harness. A generated draft is not treated as final by default:
+Recommended flow:
 
 ```text
-Archive / Context
-  -> Generator
-  -> Verifier
-  -> Reviser (if needed)
-  -> Final Gate
-  -> Final Output
-```
-
-- `Generator` produces a candidate PRD, PRD iteration, or handoff organized by business scenario.
-- `Verifier` independently checks the candidate output and does not edit files directly.
-- `Reviser` only makes targeted changes based on Verifier findings or explicit user input.
-- `Final Gate` decides whether the output is `pass`, `warn`, or `fail`.
-
-Verifier checks have two parts:
-
-- Requirement-spec checks: based on `SKILL.md`, templates, requirement discovery methods, quality scoring, and anti-drift rules.
-- BKN methodology checks: based on `references/bkn-methodology.md` and `references/bkn-requirement-ontology-discovery.md`, covering object, fact property, relation, metric, operator, action, governance, and handoff boundaries.
-
-This Harness does not require platform-level Eval / Trace during requirement discovery. It keeps only the necessary input archive, internal findings, revision summary, and final gate result. When a PRD, PRD iteration, or handoff is written to the project folder, a sibling `*-verification-findings.md` should be written as well, while findings stay out of the PRD body.
-
-## Service Scenarios
-
-Use `bkn-requirement` when you need to:
-
-- Prepare for a business expert interview.
-- Process interview notes or meeting transcripts.
-- Convert a rough idea, PRD, BRD, or process document into a standard PRD.
-- Split a complex requirement into business scenarios.
-- Identify missing business rules, data sources, permissions, and acceptance cases.
-- Generate follow-up questions for AI engineers.
-- Produce a handoff summary for `BKN_Creator`.
-
-## Relationship With `BKN_Creator`
-
-`bkn-requirement` and `BKN_Creator` work in sequence:
-
-```text
-Business idea / interview / draft PRD
+Business material / interview / draft PRD
   -> bkn-requirement
-  -> Business-scenario-centered PRD
-  -> BKN_Creator handoff summary
+  -> scenario-centered PRD + BKN_Creator handoff summary
+  -> optional bkn-ontology-builder
+  -> business-reviewable ontology modeling scheme
   -> BKN_Creator
   -> BKN modeling, binding, testing, and validation
+  -> optional bkn-ontology-builder refine_mode
+  -> implementation-informed scheme revision / delivery archive
 ```
 
-`bkn-requirement` does not create `.bkn` files, bind data sources or platform data views, push networks, or execute platform operations. Those are downstream responsibilities of `BKN_Creator` and related KWeaver engineering tools.
+Both skills use a lightweight Agentic Harness:
 
-## AI Agent Skills
+```text
+Archive / Context -> Generator -> Verifier -> Reviser (if needed) -> Final Gate -> Final Output
+```
 
-Install the skill from this repository with `npx skills`:
+## Installation
+
+Install a selected skill from this repository with `npx skills`:
 
 ```bash
 npx skills add https://github.com/kweaver-ai/kweaver-engineering \
   --skill bkn-requirement
 ```
 
-`bkn-requirement` — a requirement discovery skill for KWeaver BKN projects. It helps AI engineers turn interviews, meeting notes, draft PRDs, BRDs, process descriptions, and system/data materials into a business-scenario-centered PRD, then produce a `BKN_Creator` handoff summary. See `skills/bkn-requirement/SKILL.md`.
-
 ```bash
 npx skills add https://github.com/kweaver-ai/kweaver-engineering \
   --skill bkn-ontology-builder
 ```
 
-`bkn-ontology-builder` — an ontology scheme builder skill for KWeaver BKN projects. It generates, refines, or compares business-reviewable ontology modeling schemes from PRDs, meeting notes, process descriptions, system/data materials, handoff summaries, existing schemes, or implementation feedback. See `skills/bkn-ontology-builder/SKILL.md`.
-
 `npx skills` installs the selected skill into the skills location supported by the developer's current AI agent environment. Restart your agent session after installation so the skill list refreshes.
 
-### Skill Source
+## `bkn-requirement`
 
-This repository publishes `bkn-requirement` as a standard self-contained Agent Skill directory. The repository also keeps a shared source copy of the BKN methodology under `skills/common/` for cross-skill reuse:
+`bkn-requirement` is used before formal BKN modeling. It helps AI engineers and business experts turn interviews, meeting notes, draft PRDs, BRDs, process descriptions, and system/data materials into a business-scenario-centered PRD.
+
+### Service Scenarios
+
+- Prepare business expert interviews and material request lists.
+- Process interview notes, meeting transcripts, or AI meeting notes.
+- Convert rough ideas, PRDs, BRDs, or process documents into standard PRDs.
+- Split complex requirements into testable business scenarios.
+- Identify missing business rules, data sources, permissions, and acceptance cases.
+- Generate follow-up questions, business acceptance cases, and `BKN_Creator` handoff summaries.
+
+### Usage Examples
+
+```text
+Use $bkn-requirement to generate a one-page customer research outline from this customer background.
+```
+
+```text
+Use $bkn-requirement to update the next PRD version from this research outline, meeting notes and materials, and previous PRD.
+```
+
+```text
+Use $bkn-requirement to generate a BKN_Creator handoff summary.
+```
+
+## `bkn-ontology-builder`
+
+`bkn-ontology-builder` turns PRDs, meeting notes, process descriptions, system/data materials, `BKN_Creator` handoff summaries, or existing schemes into a business-reviewable ontology modeling scheme. It is an optional bridge between requirement discovery and formal BKN modeling.
+
+Its `refine_mode` also supports implementation-informed refinement from BKN construction, data binding, Action / Skill implementation, testing, Trace, or Eval feedback. The ontology modeling scheme can evolve as a project deliverable, while the skill still does not create `.bkn` files, bind data views, push networks, or perform platform operations.
+
+### Service Scenarios
+
+- Generate ontology modeling schemes from PRDs, handoff summaries, meeting notes, or business material.
+- Refine existing ontology schemes based on business feedback.
+- Revise candidate schemes based on Verifier findings.
+- Refine schemes from BKN construction, data binding, Action / Skill implementation, testing, Trace, or Eval feedback.
+- Compare PRDs and ontology schemes, then output differences, gaps, and strengthening suggestions.
+
+### Usage Examples
+
+```text
+Use $bkn-ontology-builder to generate an ontology modeling scheme from this PRD and BKN_Creator handoff summary.
+```
+
+```text
+Use $bkn-ontology-builder to produce a revised scheme from this existing ontology scheme and Verifier findings.
+```
+
+```text
+Use $bkn-ontology-builder to revise the ontology modeling scheme from the built .bkn, data binding results, Action/Skill implementation, and test report.
+```
+
+## Skill Source And Installation Layout
+
+This repository publishes standard self-contained Agent Skill directories. It also keeps a shared source copy of the BKN methodology under `skills/common/` for cross-skill reuse:
 
 ```text
 skills/
@@ -130,6 +129,43 @@ skills/
 ```
 
 Each skill uses its own `references/bkn-methodology.md` at runtime, so `npx skills add ... --skill <skill-name>` can install the selected skill by itself. `skills/common/bkn-methodology.md` is the repository-level source copy; maintainers should sync it into each skill's `references/bkn-methodology.md` before publishing.
+
+## `bkn-methodology.md`
+
+`bkn-methodology.md` is the shared BKN methodology foundation used by both skills. It is not a standalone skill and not a `.bkn` syntax manual. It gives agents a common rule base for deciding object, relation, fact, metric, operator, Action, governance, and Skill / Agent contract boundaries in BKN projects.
+
+It answers questions such as:
+
+- What should become a business object, and what should remain a property, metric, result, state, or rule.
+- How relationships should express business paths instead of field joins.
+- How to separate queries, calculations, explanation logic, Skill / Agent tasks, and side-effecting Actions.
+- How to separate stable facts, runtime state, event records, and audit records.
+- How permissions, approvals, Trace, Eval, evidence chains, and human confirmation points enter governance boundaries.
+
+The repository keeps one shared source copy:
+
+```text
+skills/common/bkn-methodology.md
+```
+
+Each independently installable skill carries its own runtime snapshot:
+
+```text
+skills/bkn-requirement/references/bkn-methodology.md
+skills/bkn-ontology-builder/references/bkn-methodology.md
+```
+
+When maintaining the methodology, edit `skills/common/bkn-methodology.md` first, then run:
+
+```bash
+skills/common/sync-common-references.py
+```
+
+Before publishing, verify all snapshots are in sync:
+
+```bash
+skills/common/sync-common-references.py --check
+```
 
 ### Manual Fallback (Advanced)
 
@@ -242,9 +278,7 @@ Use $bkn-requirement to generate a standard PRD from this interview note.
 Use $bkn-ontology-builder to generate an ontology modeling scheme from this PRD and handoff summary.
 ```
 
-## How To Use
-
-### 0. Project folder
+## Project Folder And Input Archive
 
 Create one shared folder per customer or project so requirement discovery, ontology modeling, BKN delivery references, presales, and delivery materials do not mix:
 
@@ -260,6 +294,10 @@ Suggested names:
 | Meeting memo | `YYYYMMDD-<project>-round-X-meeting-memo.md` |
 | Validation output | `<project>-prd-round-X-validation.md` |
 | PRD | `<project>-PRD vX.Y.md` |
+| Ontology modeling scheme | `<project>-ontology-modeling-scheme vX.Y.md` or `<project>-ontology-modeling-scheme vX.Y-candidate.md` |
+| Verifier findings | `<project>-ontology-modeling-scheme vX.Y-verifier-findings.md` |
+| Final Gate | `<project>-ontology-modeling-scheme vX.Y-final-gate.md` |
+| Implementation feedback refinement note | `<project>-ontology-modeling-scheme vX.Y-implementation-feedback-refine.md` |
 
 Archive each round's input materials under:
 
@@ -281,93 +319,7 @@ Recommended input names:
 
 The first round does not always produce a PRD. If the information is insufficient, output a validation-style `meeting_digest` to identify gaps and the next research focus. If the information is sufficient, generate `<project>-PRD v0.1.md`.
 
-If only a project folder is provided, the skill defaults to detecting the latest PRD, latest validation output, latest research outline, and latest meeting notes, then chooses the appropriate mode from the user's intent: process meeting notes, iterate a PRD, standardize an existing PRD, or review a PRD. It asks for confirmation only when versions, rounds, or candidate files conflict.
-
-### 1. Prepare a customer visit
-
-Use:
-
-```text
-Use $bkn-requirement to generate a one-page customer research outline from the following customer background.
-```
-
-### 2. Process meeting notes
-
-Use:
-
-```text
-Use $bkn-requirement to process this AI meeting note and output this round's research updates, unresolved questions, and PRD impact.
-```
-
-You can also provide a project folder or explicit files:
-
-```text
-Use $bkn-requirement to process the first-round meeting notes for this project.
-Project folder: docs/prj-guotai-haitong/
-Research outline: /path/to/research-outline.md
-Meeting notes: /path/to/meeting-notes.md
-There is no previous PRD in this round. Output <project>-prd-round-1-validation.md and do not generate a PRD.
-```
-
-### 3. Iterate a PRD
-
-Use:
-
-```text
-Use $bkn-requirement to update the next PRD version from this research outline, meeting notes and materials, and previous PRD, including the version record.
-```
-
-If you only provide the project folder:
-
-```text
-Use $bkn-requirement to iterate the PRD from the latest materials in docs/prj-guotai-haitong/.
-Automatically identify the latest PRD, latest research outline, latest meeting notes, and current source manifest.
-```
-
-### 4. Standardize an existing PRD or requirement document
-
-If you already have a PRD, BRD, or requirement draft and want to turn it into the standard PRD format, use:
-
-```text
-Use $bkn-requirement to turn this existing PRD into a standard PRD.
-Input file: /path/to/PRD.md
-```
-
-In this case, the skill defaults to outputting `<project>-PRD v0.1.md` or the next suggested version, with a quality summary and scenario-based business follow-up questions. For each core scenario, the PRD body first explains which business objects must be recognized, which business links must be expressed, which judgments / calculations / progressions must happen, and which responsibilities or controls must be governed, before the final `BKN_Creator` handoff summary is produced. It falls back to a validation or review report only when the source material is insufficient.
-
-### 5. Review an existing PRD
-
-Use:
-
-```text
-Use $bkn-requirement to assess whether this PRD is ready for BKN_Creator.
-```
-
-The skill will identify missing scenario details, unclear rules, data gaps, acceptance gaps, and handoff risks.
-
-### 6. Handoff to `BKN_Creator`
-
-When the PRD is ready, use:
-
-```text
-Use $bkn-requirement to generate a BKN_Creator handoff summary.
-```
-
-The handoff summary is a Chinese business-readable summary. It is not a machine-readable schema and should not turn the PRD into a modeling file.
-
-The Chinese summary first maps each scenario to:
-
-- Business objects that must be recognized (conceptual model layer).
-- Business links that must be expressed (relationship layer).
-- Judgments, calculations, or progressions that must happen (dynamic layer).
-- Responsibilities, permissions, and traceability that must be controlled (governance layer).
-- Business tasks that can be supported by Skill / Agent capabilities.
-
-It then produces the global rollup with business-readable headings:
-
-- Business-confirmed content: confirmed scenarios, objects, rules, systems, and acceptance cases.
-- Still modeling candidates: candidates inferred by the AI engineer.
-- Items for downstream modeling decisions: modeling questions left for `BKN_Creator`.
+If only a project folder is provided, the skills default to detecting the latest PRD, latest validation output, latest ontology modeling scheme, latest research outline, latest meeting notes, and current source manifest, then choose the appropriate mode from the user's intent. They ask for confirmation only when versions, rounds, or candidate files conflict.
 
 ## Skill Structure
 
@@ -379,24 +331,23 @@ skills/
     SKILL.md
     agents/openai.yaml
     assets/
-      interview-brief-template.md
-      research-plan-template.md
-      source-manifest-template.md
-      interview-template.md
-      requirements-template.md
-      scenario-test-case-template.md
-      bkn-creator-handoff-template.md
-      downstream-agent-card-template.md
     references/
       bkn-methodology.md
-      ...
+  bkn-ontology-builder/
+    SKILL.md
+    agents/openai.yaml
+    assets/
+    references/
+      bkn-methodology.md
 ```
 
 ## Reading Path
 
 1. Read this file for an overall view of the project’s value, goals, and scope of capabilities.
-2. Open `skills/bkn-requirement/SKILL.md` and follow the assets under `skills/bkn-requirement/assets/` for templates and examples.
-3. Open `skills/bkn-requirement/references/bkn-methodology.md` for the methodology used by the installed skill. Maintainers can edit `skills/common/bkn-methodology.md` first, then sync it into the skill reference before publishing.
+2. For requirement discovery, open `skills/bkn-requirement/SKILL.md` and read that skill's `assets/` and `references/` as needed.
+3. For ontology modeling schemes, open `skills/bkn-ontology-builder/SKILL.md` and read that skill's templates and method references as needed.
+4. To decide object, relation, metric, operator, Action, governance, and Skill / Agent boundaries, read the relevant skill's `references/bkn-methodology.md`.
+5. To maintain shared methodology, edit `skills/common/bkn-methodology.md` first, then sync it into each skill's runtime snapshot.
 
 ## Support & Contact
 
