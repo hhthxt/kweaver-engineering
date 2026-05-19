@@ -77,13 +77,15 @@ BKN 元素承担三类作用：
 
 ## 项目目录与命名规范
 
-每个客户或项目必须有独立项目文件夹，避免多项目资料混在一起。默认目录：
+每个客户或项目必须有独立项目文件夹，避免多项目资料混在一起。默认目录统一为：
 
 ```text
-docs/requirements/prj-<客户或项目简称>/
+docs/prj-<客户或项目简称>/
 ```
 
-如用户未提供项目目录，应先建议创建项目目录，再输出文件名建议。不要把不同客户的调研大纲、会议纪要、PRD 和验证输出混放在通用 `docs/requirements/` 根目录。
+统一使用 `docs/prj-<项目>/`。该共享项目目录可承载需求发现、PRD、验证输出、`BKN_Creator` 交接摘要、可选本体建模方案和后续 BKN 交付参考。
+
+如用户未提供项目目录，应先建议创建项目目录，再输出文件名建议。不要把不同客户的调研大纲、会议纪要、PRD 和验证输出混放在通用 `docs/` 根目录。
 
 文件命名规则：
 
@@ -97,7 +99,7 @@ docs/requirements/prj-<客户或项目简称>/
 每轮输入材料应归档到：
 
 ```text
-docs/requirements/prj-<客户或项目简称>/inputs/round-XX/
+docs/prj-<客户或项目简称>/inputs/round-XX/
 ```
 
 推荐命名：
@@ -114,7 +116,7 @@ docs/requirements/prj-<客户或项目简称>/inputs/round-XX/
 每轮处理都应生成或更新：
 
 ```text
-docs/requirements/prj-<客户或项目简称>/inputs/round-XX/source-manifest.md
+docs/prj-<客户或项目简称>/inputs/round-XX/source-manifest.md
 ```
 
 `source-manifest.md` 记录本轮原始路径、归档路径、材料类型、用途、处理时间和使用方式。模板见 `assets/source-manifest-template.md`。

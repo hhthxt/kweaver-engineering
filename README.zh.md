@@ -214,10 +214,10 @@ skills/
 
 ### 0. 项目资料目录
 
-每个客户或项目建议建立独立目录，避免售前、交付和开发资料混在一起：
+每个客户或项目建议建立共享项目目录，避免需求发现、本体建模、BKN 交付参考、售前和交付资料混在一起：
 
 ```text
-docs/requirements/prj-<客户或项目简称>/
+docs/prj-<客户或项目简称>/
 ```
 
 命名建议：
@@ -232,7 +232,7 @@ docs/requirements/prj-<客户或项目简称>/
 每一轮输入材料建议归档到：
 
 ```text
-docs/requirements/prj-<客户或项目简称>/inputs/round-XX/
+docs/prj-<客户或项目简称>/inputs/round-XX/
 ```
 
 如果用户指定的输入文件不在项目文件夹内，Skill 必须先复制一份到本轮 `inputs/round-XX/`，不移动原始文件；如果输入文件已经在项目文件夹内，可以不复制，但应生成或更新 `source-manifest.md` 记录本轮输入来源。
@@ -271,7 +271,7 @@ docs/requirements/prj-<客户或项目简称>/inputs/round-XX/
 
 ```text
 使用 $bkn-requirement，处理这个项目的第一轮会议纪要。
-项目目录：docs/requirements/prj-国泰海通/
+项目目录：docs/prj-国泰海通/
 本轮调研大纲：/path/to/调研大纲.md
 本轮会议纪要：/path/to/会议纪要.md
 本轮没有上一版 PRD，请输出 <项目名>-prd-第1轮验证输出.md，不要生成 PRD。
@@ -288,7 +288,7 @@ docs/requirements/prj-<客户或项目简称>/inputs/round-XX/
 如果只给项目目录：
 
 ```text
-使用 $bkn-requirement，基于 docs/requirements/prj-国泰海通/ 的最新资料迭代 PRD。
+使用 $bkn-requirement，基于 docs/prj-国泰海通/ 的最新资料迭代 PRD。
 请自动识别最新 PRD、最新调研大纲、最新会议纪要和本轮输入源清单。
 ```
 

@@ -214,10 +214,10 @@ Use $bkn-requirement to generate a standard PRD from this interview note.
 
 ### 0. Project folder
 
-Create one folder per customer or project so presales, delivery, and engineering materials do not mix:
+Create one shared folder per customer or project so requirement discovery, ontology modeling, BKN delivery references, presales, and delivery materials do not mix:
 
 ```text
-docs/requirements/prj-<customer-or-project-short-name>/
+docs/prj-<customer-or-project-short-name>/
 ```
 
 Suggested names:
@@ -232,7 +232,7 @@ Suggested names:
 Archive each round's input materials under:
 
 ```text
-docs/requirements/prj-<customer-or-project-short-name>/inputs/round-XX/
+docs/prj-<customer-or-project-short-name>/inputs/round-XX/
 ```
 
 If a user-specified input file is outside the project folder, the skill must copy it into the current round's `inputs/round-XX/` folder before generating the validation output or PRD, without moving the original file. If the input file is already inside the project folder, copying is optional, but the skill should create or update `source-manifest.md` to record the input source.
@@ -271,7 +271,7 @@ You can also provide a project folder or explicit files:
 
 ```text
 Use $bkn-requirement to process the first-round meeting notes for this project.
-Project folder: docs/requirements/prj-guotai-haitong/
+Project folder: docs/prj-guotai-haitong/
 Research outline: /path/to/research-outline.md
 Meeting notes: /path/to/meeting-notes.md
 There is no previous PRD in this round. Output <project>-prd-round-1-validation.md and do not generate a PRD.
@@ -288,7 +288,7 @@ Use $bkn-requirement to update the next PRD version from this research outline, 
 If you only provide the project folder:
 
 ```text
-Use $bkn-requirement to iterate the PRD from the latest materials in docs/requirements/prj-guotai-haitong/.
+Use $bkn-requirement to iterate the PRD from the latest materials in docs/prj-guotai-haitong/.
 Automatically identify the latest PRD, latest research outline, latest meeting notes, and current source manifest.
 ```
 
