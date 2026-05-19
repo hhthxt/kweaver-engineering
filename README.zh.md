@@ -14,6 +14,12 @@ KWeaver BKN 项目的 AI 工程能力工具与 Skill 包。
 
 它适用于正式 BKN 建模之前的需求发现阶段。
 
+### `bkn-ontology-builder`
+
+`bkn-ontology-builder` 是面向 KWeaver BKN 项目的本体建模方案 Skill。它把 PRD、会议纪要、流程说明、系统/数据材料、`BKN_Creator` 交接摘要或已有方案整理为业务可评审的本体建模方案。
+
+它是需求发现和正式 BKN 建模之间的可选桥梁，不创建 `.bkn` 文件，不绑定数据视图，不推送知识网络，也不执行平台操作。
+
 ## 背景
 
 在 BKN 项目里，最难的问题往往不是直接编写模型文件，而是先把业务需求讲清楚：
@@ -92,6 +98,13 @@ npx skills add https://github.com/kweaver-ai/kweaver-engineering \
 
 `bkn-requirement` — 面向 KWeaver BKN 项目的需求发现 Skill，帮助 AI 工程师把访谈、会议纪要、PRD 草稿、BRD、流程说明和系统/数据材料整理为业务场景中心 PRD，并输出 `BKN_Creator` 交接摘要。参见 `skills/bkn-requirement/SKILL.md`。
 
+```bash
+npx skills add https://github.com/kweaver-ai/kweaver-engineering \
+  --skill bkn-ontology-builder
+```
+
+`bkn-ontology-builder` — 面向 KWeaver BKN 项目的本体建模方案 Skill，基于 PRD、会议纪要、流程说明、系统/数据材料、交接摘要或已有方案生成、修订或对比业务可评审的本体建模方案。参见 `skills/bkn-ontology-builder/SKILL.md`。
+
 `npx skills` 会把指定 Skill 安装到开发者当前 AI Agent 环境支持的 skills 位置。安装完成后，重启 Agent 会话，让 Skill 列表刷新。
 
 ### Skill 源码位置
@@ -108,9 +121,15 @@ skills/
     assets/
     references/
       bkn-methodology.md
+  bkn-ontology-builder/
+    SKILL.md
+    agents/openai.yaml
+    assets/
+    references/
+      bkn-methodology.md
 ```
 
-`bkn-requirement` 运行时引用自身的 `references/bkn-methodology.md`，因此 `npx skills add ... --skill bkn-requirement` 只安装这一个 Skill 目录也可以完整运行。`skills/common/bkn-methodology.md` 是仓库级公共源文件；维护者发布前应把它同步到 `skills/bkn-requirement/references/bkn-methodology.md`。
+每个 Skill 运行时都引用自身的 `references/bkn-methodology.md`，因此 `npx skills add ... --skill <skill-name>` 只安装一个 Skill 目录也可以完整运行。`skills/common/bkn-methodology.md` 是仓库级公共源文件；维护者发布前应把它同步到各 Skill 的 `references/bkn-methodology.md`。
 
 ### 手工安装备用方式（高级）
 
@@ -134,6 +153,8 @@ cd kweaver-engineering
 ```
 
 如果安装后的 `bkn-requirement/references/bkn-methodology.md` 缺失，说明安装包不完整，应重新安装或刷新。
+
+如果安装 `bkn-ontology-builder`，同样复制 `skills/bkn-ontology-builder/`。
 
 Cursor、Codex、OpenClaw 或其他 Agent 是否能自动发现该 Skill，取决于它们是否支持 `SKILL.md` Skill 机制，以及当前 `npx skills` 或 Agent 配置写入的安装目录。
 
@@ -202,12 +223,23 @@ skills/
   bkn-requirement/
 ```
 
-开发和维护时建议同时保留 `skills/common/bkn-methodology.md`，但运行时不依赖它，因为 `bkn-requirement` 自身已经携带方法论快照。
+或：
+
+```text
+skills/
+  bkn-ontology-builder/
+```
+
+开发和维护时建议同时保留 `skills/common/bkn-methodology.md`，但运行时不依赖它，因为每个分发 Skill 自身已经携带方法论快照。
 
 当 Agent 可以访问项目工作区时，可以直接按名称调用：
 
 ```text
 使用 $bkn-requirement，基于这份访谈纪要输出标准 PRD。
+```
+
+```text
+使用 $bkn-ontology-builder，基于这份 PRD 和交接摘要生成本体建模方案。
 ```
 
 ## 如何使用

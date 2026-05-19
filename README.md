@@ -14,6 +14,12 @@ AI engineering capability tools and skill packages for KWeaver BKN projects.
 
 It is designed for the stage before formal BKN modeling.
 
+### `bkn-ontology-builder`
+
+`bkn-ontology-builder` is an ontology scheme builder skill for KWeaver BKN projects. It turns PRDs, meeting notes, process descriptions, system/data materials, `BKN_Creator` handoff summaries, or existing schemes into a business-reviewable ontology modeling scheme.
+
+It is an optional bridge between requirement discovery and formal BKN modeling. It does not create `.bkn` files, bind data views, push networks, or perform platform operations.
+
 ## Background
 
 In BKN projects, the hardest problem is often not writing the model file. The earlier problem is making the business requirement clear enough:
@@ -92,6 +98,13 @@ npx skills add https://github.com/kweaver-ai/kweaver-engineering \
 
 `bkn-requirement` — a requirement discovery skill for KWeaver BKN projects. It helps AI engineers turn interviews, meeting notes, draft PRDs, BRDs, process descriptions, and system/data materials into a business-scenario-centered PRD, then produce a `BKN_Creator` handoff summary. See `skills/bkn-requirement/SKILL.md`.
 
+```bash
+npx skills add https://github.com/kweaver-ai/kweaver-engineering \
+  --skill bkn-ontology-builder
+```
+
+`bkn-ontology-builder` — an ontology scheme builder skill for KWeaver BKN projects. It generates, refines, or compares business-reviewable ontology modeling schemes from PRDs, meeting notes, process descriptions, system/data materials, handoff summaries, or existing schemes. See `skills/bkn-ontology-builder/SKILL.md`.
+
 `npx skills` installs the selected skill into the skills location supported by the developer's current AI agent environment. Restart your agent session after installation so the skill list refreshes.
 
 ### Skill Source
@@ -108,9 +121,15 @@ skills/
     assets/
     references/
       bkn-methodology.md
+  bkn-ontology-builder/
+    SKILL.md
+    agents/openai.yaml
+    assets/
+    references/
+      bkn-methodology.md
 ```
 
-`bkn-requirement` uses `references/bkn-methodology.md` at runtime, so `npx skills add ... --skill bkn-requirement` can install the selected skill by itself. `skills/common/bkn-methodology.md` is the repository-level source copy; maintainers should sync it into `skills/bkn-requirement/references/bkn-methodology.md` before publishing.
+Each skill uses its own `references/bkn-methodology.md` at runtime, so `npx skills add ... --skill <skill-name>` can install the selected skill by itself. `skills/common/bkn-methodology.md` is the repository-level source copy; maintainers should sync it into each skill's `references/bkn-methodology.md` before publishing.
 
 ### Manual Fallback (Advanced)
 
@@ -134,6 +153,8 @@ Expected installed layout:
 ```
 
 If the installed `bkn-requirement/references/bkn-methodology.md` file is missing, the install is incomplete and should be refreshed.
+
+For `bkn-ontology-builder`, copy `skills/bkn-ontology-builder/` in the same way.
 
 Cursor, Codex, OpenClaw, and other agents can discover this skill only if they support `SKILL.md`-based skills and scan the directory written by `npx skills` or by the agent configuration.
 
@@ -202,12 +223,23 @@ skills/
   bkn-requirement/
 ```
 
-Keeping `skills/common/bkn-methodology.md` in the same repository is recommended for development, but runtime use does not require it because `bkn-requirement` carries its own methodology snapshot.
+or:
+
+```text
+skills/
+  bkn-ontology-builder/
+```
+
+Keeping `skills/common/bkn-methodology.md` in the same repository is recommended for development, but runtime use does not require it because each distributed skill carries its own methodology snapshot.
 
 When the agent has access to the project workspace, invoke it by name:
 
 ```text
 Use $bkn-requirement to generate a standard PRD from this interview note.
+```
+
+```text
+Use $bkn-ontology-builder to generate an ontology modeling scheme from this PRD and handoff summary.
 ```
 
 ## How To Use

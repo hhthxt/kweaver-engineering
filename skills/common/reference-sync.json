@@ -5,6 +5,12 @@
       "dest": "skills/bkn-requirement/references/bkn-methodology.md",
       "skill": "bkn-requirement",
       "description": "BKN methodology runtime snapshot for the requirement discovery skill."
+    },
+    {
+      "source": "skills/common/bkn-methodology.md",
+      "dest": "skills/bkn-ontology-builder/references/bkn-methodology.md",
+      "skill": "bkn-ontology-builder",
+      "description": "BKN methodology runtime snapshot for the ontology scheme builder skill."
     }
   ]
 }
